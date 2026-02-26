@@ -1,0 +1,188 @@
+[
+    {
+        "id": "ilit",
+        "title": "Understanding ILITs",
+        "desc": "How Irrevocable Life Insurance Trusts shield your estate from taxes.",
+        "tag": "Estate Strategy",
+        "content": "An Irrevocable Life Insurance Trust (ILIT) is a specialized trust designed to own and manage life insurance policies. By moving the policy out of your personal estate, the death benefit is generally protected from federal and state estate taxes.",
+        "deepDive": {
+            "title": "Mastering the ILIT",
+            "sections": [
+                {
+                    "heading": "Tax Shield Mechanics",
+                    "text": "When an ILIT owns the policy, the proceeds are removed from your taxable estate. This is critical for high-net-worth individuals to avoid the 40% federal estate tax on life insurance proceeds."
+                },
+                {
+                    "heading": "The 3-Year Rule",
+                    "text": "If you transfer an existing policy into an ILIT, you must survive for three years after the transfer for the proceeds to be excluded from your estate. Direct purchases by the trust avoid this rule."
+                },
+                {
+                    "heading": "Crummey Powers",
+                    "text": "To qualify for the annual gift tax exclusion, beneficiaries must be given 'Crummey' withdrawal rights for a specific period (usually 30 days) after each contribution to the trust."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "NC Judicial Branch - Estate Forms",
+                    "url": "https://www.nccourts.gov/documents/forms?field_form_category_target_id=856"
+                },
+                {
+                    "name": "IRS Publication 559 (Survivors, Executors, and Administrators)",
+                    "url": "https://www.irs.gov/forms-pubs/about-publication-559"
+                }
+            ]
+        }
+    },
+    {
+        "id": "ibc",
+        "title": "Infinite Banking 101",
+        "desc": "The mechanics of borrowing against your own policy cash value.",
+        "tag": "Funding",
+        "content": "IBC involves using a high-cash-value policy as a personal bank. You borrow against the policy's cash value while your full balance continues to earn dividends and interest.",
+        "deepDive": {
+            "title": "Infinite Banking Dynamics",
+            "sections": [
+                {
+                    "heading": "Non-Direct Recognition",
+                    "text": "In a non-direct recognition policy, the insurance company pays the same dividend rate on the entire cash value, including the portion used as collateral for a loan."
+                },
+                {
+                    "heading": "Uninterrupted Compounding",
+                    "text": "Because the cash value itself never leaves the policy, it continues to compound based on the full value, while the loan interest is paid separately to the carrier."
+                },
+                {
+                    "heading": "Debt-to-Equity Control",
+                    "text": "Maintaining a healthy loan-to-value (LTV) ratio (under 90%) ensures the policy remains in-force and continues to grow your wealth base."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "Infinite Banking Concept - Official Guide",
+                    "url": "https://infinitebanking.org/about/"
+                }
+            ]
+        }
+    },
+    {
+        "id": "legal-forms",
+        "title": "Legal Forms by State",
+        "desc": "Essential documentation for recording and maintaining your trust.",
+        "tag": "Compliance",
+        "content": "Each state has specific requirements for trust recording and asset assignment. Understanding these is vital for judicial compliance.",
+        "deepDive": {
+            "title": "State-Specific Filing Guide",
+            "sections": [
+                {
+                    "heading": "North Carolina / Georgia",
+                    "text": "Detailed Table of Contents and Portfolio Indexing is required for physical recording in the Superior Court system. Certificate of Trust is often preferred over filing the full document."
+                },
+                {
+                    "heading": "Florida / Texas",
+                    "text": "Notice of Trust must be filed in the county of the settlor's domicile. Affidavit of Trust is commonly used to transfer title of assets to the trustee."
+                },
+                {
+                    "heading": "California / New York",
+                    "text": "Trust Transfer Deeds and PCOR (Preliminary Change of Ownership Report) are required when funding real estate into the trust. Stringent Crummey notification proof is recommended."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "NC Judicial Branch - Estate & Trust Forms",
+                    "url": "https://www.nccourts.gov/documents/forms"
+                },
+                {
+                    "name": "Georgia Courts - Probate Layout",
+                    "url": "https://georgiacourts.gov/probate/"
+                },
+                {
+                    "name": "Florida Courts - Probate & Trust Forms",
+                    "url": "https://www.flcourts.org/Resources-Services/Court-Improvement/Family-Courts/Family-Law-Self-Help-Information/Family-Law-Forms"
+                },
+                {
+                    "name": "Texas Judicial Branch - Rules & Forms",
+                    "url": "https://www.txcourts.gov/rules-forms/"
+                },
+                {
+                    "name": "California Courts - Probate Forms",
+                    "url": "https://www.courts.ca.gov/forms.htm?filter=PB"
+                },
+                {
+                    "name": "NY Courts - Surrogate's Court Forms",
+                    "url": "http://ww2.nycourts.gov/forms/surrogates/index.shtml"
+                }
+            ]
+        }
+    },
+    {
+        "id": "loan-workflow",
+        "title": "Processing a Trust Loan",
+        "desc": "Step-by-step SOP for accessing liquidity from the trust.",
+        "tag": "Operations",
+        "content": "Learn the standard operating procedure for requesting a collateralized loan from your insurance-funded trust.",
+        "deepDive": {
+            "title": "Loan Processing SOP",
+            "sections": [
+                {
+                    "heading": "Step 1: Board Resolution",
+                    "text": "The Trustee must document a formal resolution authorizing the loan from the trust's life insurance policy for trust-related investments or expenses."
+                },
+                {
+                    "heading": "Step 2: Carrier Request",
+                    "text": "Submit the standard loan request form to the insurance carrier. Request 'Fixed Rate' if available to lock in borrowing costs."
+                },
+                {
+                    "heading": "Step 3: Fund Distribution",
+                    "text": "Once the carrier issues funds (directly into the Trust Bank Account), the Trustee should record the inflow as a 'Policy Loan Liability' for accounting purposes."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "Standard Life Insurance Policy Loan Request Example",
+                    "url": "https://www.investopedia.com/terms/p/policyloan.asp"
+                }
+            ]
+        }
+    },
+    {
+        "id": "carriers",
+        "title": "Top Funding Carriers",
+        "desc": "Prominent mutual insurance companies specializing in IBC-style policies.",
+        "tag": "Institutions",
+        "content": "Not all life insurance companies are suited for Trust Funding or Infinite Banking. Prominent institutions are typically mutually owned (owned by policyholders, not shareholders) and explicitly allow non-direct recognition policy loans.",
+        "deepDive": {
+            "title": "Prominent IBC Institutions",
+            "sections": [
+                {
+                    "heading": "MassMutual (Massachusetts Mutual)",
+                    "text": "A heavily utilized, highly-rated mutual company known for strong historical dividend payouts and flexible Paid-Up Additions (PUA) riders essential for rapid cash value growth."
+                },
+                {
+                    "heading": "Penn Mutual",
+                    "text": "Favored by many IBC practitioners for their direct recognition and non-direct recognition options, allowing policyholders to choose how their loans impact dividend crediting based on market environments."
+                },
+                {
+                    "heading": "Lafayette Life",
+                    "text": "A smaller but highly specialized mutual company out of the Western & Southern Financial Group, known for strict adherence to non-direct recognition and excellent IBC-friendly whole life chassis."
+                },
+                {
+                    "heading": "Guardian Life",
+                    "text": "Known for an exceptionally strong Whole Life portfolio. While Guardian uses direct recognition, their 'Index Participation Feature' is popular for sophisticated trust strategies."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "Nelson Nash Institute (IBC Practitioner Finder)",
+                    "url": "https://infinitebanking.org/finder/"
+                },
+                {
+                    "name": "MassMutual - Whole Life Overview",
+                    "url": "https://www.massmutual.com/insurance/life-insurance/whole-life-insurance"
+                },
+                {
+                    "name": "Penn Mutual - Whole Life",
+                    "url": "https://www.pennmutual.com/for-individuals-and-businesses/products/life-insurance/whole-life-insurance"
+                }
+            ]
+        }
+    }
+]

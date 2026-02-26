@@ -1,0 +1,75 @@
+{
+    "policies": [
+        {
+            "id": "pol_1",
+            "carrier": "MassMutual",
+            "insured": "Primary Settlor",
+            "cashValue": 265402,
+            "deathBenefit": 2110000,
+            "loanInterestRate": 4.5,
+            "projectionData": [
+                {
+                    "name": "Year 1",
+                    "cash": 45000,
+                    "death": 2000000
+                },
+                {
+                    "name": "Year 3",
+                    "cash": 142000,
+                    "death": 2050000
+                },
+                {
+                    "name": "Year 5",
+                    "cash": 265000,
+                    "death": 2110000
+                },
+                {
+                    "name": "Year 7",
+                    "cash": 410000,
+                    "death": 2180000
+                },
+                {
+                    "name": "Year 10",
+                    "cash": 680000,
+                    "death": 2300000
+                },
+                {
+                    "name": "Year 15",
+                    "cash": 1350000,
+                    "death": 2550000
+                },
+                {
+                    "name": "Year 20",
+                    "cash": 2400000,
+                    "death": 2900000
+                }
+            ]
+        }
+    ],
+    "documents": [
+        {
+            "name": "Trust Agreement - Executed",
+            "date": "Oct 12, 2025",
+            "size": "2.4 MB",
+            "category": "Legal"
+        },
+        {
+            "name": "Policy Illustration 2026",
+            "date": "Jan 05, 2026",
+            "size": "1.2 MB",
+            "category": "Policy"
+        },
+        {
+            "name": "Beneficiary Designation Form",
+            "date": "Feb 14, 2026",
+            "size": "0.8 MB",
+            "category": "Policy"
+        },
+        {
+            "name": "Funding Schedule 2026",
+            "date": "Feb 20, 2026",
+            "size": "0.5 MB",
+            "category": "Funding"
+        }
+    ]
+}
