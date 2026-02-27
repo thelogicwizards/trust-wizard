@@ -60,16 +60,12 @@ Trust Wizard is built to be installed natively. Host the static files on any fre
 
 ## 🌩️ Deployment (Free Cloud Hosting)
 
-Because this app has absolutely no backend, it is incredibly easy and safe to deploy it publicly while maintaining 100% privacy for its users.
+**Deployment is exclusively allowed via Vercel at the following URL:**
+[https://trust-wizard.vercel.app/](https://trust-wizard.vercel.app/)
 
-**Using Vercel (Recommended):**
-1. Push this repository to GitHub.
-2. Sign in to [Vercel](https://vercel.com).
-3. Click "Add New" -> "Project".
-4. Import your `trust-wizard` GitHub repository.
-5. Click **Deploy**. Vercel will automatically build the Vite project and provide a live URL.
+*Note: Because this app has absolutely no backend, it is incredibly easy and safe to deploy it publicly while maintaining 100% privacy for its users via local IndexedDB storage.*
 
-*Once deployed, visit the URL on any device and select "Add to Home Screen" to install it as a native standalone app.*
+*Once deployed or visited at the URL above on any device, select "Add to Home Screen" to install it as a native standalone app.*
 
 ## Tech Stack
 - **Framework:** React + Vite
