@@ -40,6 +40,7 @@ import BorrowingCalculator from './components/BorrowingCalculator';
 import DividendChart from './components/DividendChart';
 import CrummeyNoticeGenerator from './components/CrummeyNoticeGenerator';
 import { loadTrustData, saveTrustData } from './utils/storage';
+import { Analytics } from '@vercel/analytics/react';
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -1138,6 +1139,7 @@ function App() {
                 onClose={() => setIsPolicyModalOpen(false)}
                 onSave={handleSavePolicy}
             />
+            <Analytics />
         </div>
     );
 }
