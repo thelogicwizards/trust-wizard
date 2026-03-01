@@ -1,0 +1,95 @@
+[
+    {
+        "id": "Universal",
+        "description": "Base essential trust documents required universally.",
+        "documents": [
+            {
+                "name": "Trust Agreement - Executed",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            },
+            {
+                "name": "Certificate of Trust",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            },
+            {
+                "name": "SS-4 Form (EIN)",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            },
+            {
+                "name": "Schedule A (Initial Assets)",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Funding",
+                "isTemplate": true
+            }
+        ]
+    },
+    {
+        "id": "California",
+        "description": "Required Californian real estate funding and registration documents.",
+        "documents": [
+            {
+                "name": "Trust Transfer Deed",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Funding",
+                "isTemplate": true
+            },
+            {
+                "name": "Preliminary Change of Ownership Report (PCOR)",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            }
+        ]
+    },
+    {
+        "id": "Florida",
+        "description": "Essential Florida trust compliance documentation.",
+        "documents": [
+            {
+                "name": "Notice of Trust",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            }
+        ]
+    },
+    {
+        "id": "Texas",
+        "description": "Required evidentiary trust documents for Texas jurisdiction.",
+        "documents": [
+            {
+                "name": "Affidavit of Trust",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            }
+        ]
+    },
+    {
+        "id": "New York",
+        "description": "New York fiduciary assumption forms.",
+        "documents": [
+            {
+                "name": "Trustee Oath and Designation",
+                "date": "Pending",
+                "size": "0 KB",
+                "category": "Legal",
+                "isTemplate": true
+            }
+        ]
+    }
+]
