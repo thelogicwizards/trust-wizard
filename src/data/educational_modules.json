@@ -184,5 +184,39 @@
                 }
             ]
         }
+    },
+    {
+        "id": "ibc-policy-types",
+        "title": "IBC Policy Types",
+        "desc": "Understanding the different insurance policies pitched for Infinite Banking.",
+        "tag": "Funding",
+        "content": "While several types of life insurance are pitched for Infinite Banking (IBC), only one aligns with the core principles of safety, predictability, and guarantees: Dividend-Paying Whole Life from a Mutual Company.",
+        "deepDive": {
+            "title": "Evaluating Policy Types for IBC",
+            "sections": [
+                {
+                    "heading": "Dividend-Paying Whole Life (The Gold Standard)",
+                    "text": "The only type strictly recommended by IBC purists. It offers guaranteed level premiums, a guaranteed death benefit, and guaranteed cash value accumulation. Dividends purchase Paid-Up Additions (PUAs) to rapidly accelerate growth without market risk."
+                },
+                {
+                    "heading": "Indexed Universal Life (IUL)",
+                    "text": "Often pitched for higher returns, but lacks core guarantees. Cash value growth is tied to a market index subject to caps and participation rates that the carrier can change. It features rising internal costs that can erode cash value during flat market years."
+                },
+                {
+                    "heading": "Universal Life (UL)",
+                    "text": "Builds cash value based on a declared interest rate set by the carrier. Similar to IULs, the cost of insurance increases over time. It lacks the long-term guarantees required for a stable banking system and can implode if costs consume the cash value."
+                },
+                {
+                    "heading": "Variable Universal Life (VUL)",
+                    "text": "Cash value is invested directly into market sub-accounts, violating the IBC principle of safety. Market downturns can cause cash value to drop. If you have a loan during a crash, it can trigger a margin call or cause policy lapse with massive tax consequences."
+                }
+            ],
+            "resources": [
+                {
+                    "name": "Infinite Banking Concept - Principles",
+                    "url": "https://infinitebanking.org/about/"
+                }
+            ]
+        }
     }
 ]
