@@ -36,6 +36,7 @@ import {
 
 import trustData from './data/trust_data.json';
 import educationalModules from './data/educational_modules.json';
+import stateTemplates from './data/state_templates.json';
 import BorrowingCalculator from './components/BorrowingCalculator';
 import DividendChart from './components/DividendChart';
 import CrummeyNoticeGenerator from './components/CrummeyNoticeGenerator';
@@ -576,6 +577,13 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [editingDoc, setEditingDoc] = useState(null);
 
+    // New Modal States
+    const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+    const [isLoadStateModalOpen, setIsLoadStateModalOpen] = useState(false);
+    const [isUnsupportedStateModalOpen, setIsUnsupportedStateModalOpen] = useState(false);
+    const [unsupportedStateName, setUnsupportedStateName] = useState('');
+    const [stateInput, setStateInput] = useState('');
+
 
     const handleAdd = () => {
         setEditingDoc(null);
@@ -601,6 +609,61 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
             onUpdateDocuments([docData, ...documents]);
         }
         setIsModalOpen(false);
+    };
+
+    const handleRestoreDefaults = () => {
+        setIsRestoreModalOpen(true);
+    };
+
+    const confirmRestoreDefaults = () => {
+        const universalTemplates = stateTemplates.find(s => s.id === 'Universal')?.documents || [];
+
+        const missingTemplates = universalTemplates.filter(template =>
+            !documents.some(doc => doc.name === template.name)
+        );
+
+        if (missingTemplates.length > 0) {
+            onUpdateDocuments([...documents, ...missingTemplates]);
+            alert(`Restored ${missingTemplates.length} default template(s).`);
+        } else {
+            alert("All default templates are already present in your vault.");
+        }
+        setIsRestoreModalOpen(false);
+    };
+
+    const handleLoadStateTemplates = () => {
+        setStateInput('');
+        setIsLoadStateModalOpen(true);
+    };
+
+    const submitLoadStateTemplates = (e) => {
+        e.preventDefault();
+        const stateStr = stateInput;
+        setIsLoadStateModalOpen(false);
+        setStateInput('');
+
+        if (!stateStr) return;
+
+        const stateData = stateTemplates.find(s => s.id.toLowerCase() === stateStr.toLowerCase().trim());
+
+        if (!stateData) {
+            setUnsupportedStateName(stateStr);
+            setIsUnsupportedStateModalOpen(true);
+            return;
+        }
+
+        const stateDocs = stateData.documents;
+
+        const missingStateDocs = stateDocs.filter(template =>
+            !documents.some(doc => doc.name === template.name)
+        );
+
+        if (missingStateDocs.length > 0) {
+            onUpdateDocuments([...documents, ...missingStateDocs]);
+            alert(`Successfully loaded ${missingStateDocs.length} required template(s) for ${stateData.id}.`);
+        } else {
+            alert(`The required templates for ${stateData.id} are already in your vault.`);
+        }
     };
 
     const handleView = (doc) => {
@@ -729,6 +792,42 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                         </div>
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button
+                                onClick={handleRestoreDefaults}
+                                style={{
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid var(--glass-border)',
+                                    borderRadius: '8px',
+                                    color: '#fff',
+                                    padding: '0.4rem 1rem',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.4rem',
+                                    cursor: 'pointer',
+                                    fontSize: '0.85rem'
+                                }}
+                            >
+                                <History size={16} /> Restore Defaults
+                            </button>
+                            <button
+                                onClick={handleLoadStateTemplates}
+                                style={{
+                                    background: 'rgba(14, 165, 233, 0.15)',
+                                    border: '1px solid rgba(14, 165, 233, 0.4)',
+                                    borderRadius: '8px',
+                                    color: '#38bdf8',
+                                    padding: '0.4rem 1rem',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.4rem',
+                                    cursor: 'pointer',
+                                    fontSize: '0.85rem'
+                                }}
+                            >
+                                <Landmark size={16} /> Load State Templates
+                            </button>
+                            <button
                                 onClick={() => setIsPrintModalOpen(true)}
                                 style={{
                                     background: 'rgba(255,255,255,0.05)',
@@ -820,6 +919,116 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                 onClose={() => setIsPrintModalOpen(false)}
                 onGenerate={handlePrintPortfolio}
             />
+
+            {/* Restore Defaults Modal */}
+            {isRestoreModalOpen && (
+                <div className="modal-overlay">
+                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                        <h3 className="card-title">
+                            <History size={20} color="#d4af37" />
+                            Restore Default Templates
+                        </h3>
+                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                            This will add missing default templates back to your vault. Existing documents will not be deleted. Do you want to continue?
+                        </p>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                onClick={confirmRestoreDefaults}
+                                style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
+                            >
+                                Continue
+                            </button>
+                            <button
+                                onClick={() => setIsRestoreModalOpen(false)}
+                                style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Load State Templates Modal */}
+            {isLoadStateModalOpen && (
+                <div className="modal-overlay">
+                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                        <h3 className="card-title">
+                            <Landmark size={20} color="#38bdf8" />
+                            Load State Templates
+                        </h3>
+                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
+                            Enter your state (e.g., California, Florida, Texas, New York) to load specific required trust templates:
+                        </p>
+                        <form onSubmit={submitLoadStateTemplates}>
+                            <input
+                                type="text"
+                                value={stateInput}
+                                onChange={(e) => setStateInput(e.target.value)}
+                                placeholder="Enter state name"
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid var(--glass-border)',
+                                    borderRadius: '12px',
+                                    padding: '0.75rem 1rem',
+                                    color: '#fff',
+                                    marginBottom: '1.5rem'
+                                }}
+                            />
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button
+                                    type="submit"
+                                    style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                    Load
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsLoadStateModalOpen(false)}
+                                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Unsupported State Modal */}
+            {isUnsupportedStateModalOpen && (
+                <div className="modal-overlay">
+                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                        <h3 className="card-title">
+                            <Info size={20} color="#38bdf8" />
+                            State Not Specifically Covered
+                        </h3>
+                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
+                            We do not currently have specific template automation for <strong>{unsupportedStateName}</strong>.
+                        </p>
+                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                            However, most simple trusts rely solely on the Universal Templates provided. If your state requires local forms (like specific deeds or affidavits), please add them manually using the "Add Document" button.
+                        </p>
+                        <div style={{ padding: '1rem', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '12px', border: '1px solid rgba(14, 165, 233, 0.2)', marginBottom: '1.5rem' }}>
+                            <p style={{ fontSize: '0.85rem', color: '#fff', margin: 0 }}>
+                                Need specific forms for {unsupportedStateName}? Contact support to request them: <br />
+                                <a href={`mailto:craig@logicwizards.one?subject=Trust Agent - Request Templates for ${unsupportedStateName}`} style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>craig@logicwizards.one</a>
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                type="button"
+                                onClick={() => setIsUnsupportedStateModalOpen(false)}
+                                style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
+                            >
+                                I Understand
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
