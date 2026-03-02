@@ -437,6 +437,13 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                alert('Invalid file format. Please upload strictly a JPG or PNG image.');
+                e.target.value = ''; // Reset input
+                return;
+            }
+
             setSelectedFile(file);
             if (!name) setName(file.name.split('.')[0]);
         }
@@ -495,7 +502,7 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                         </button>
                         <input
                             type="file"
-                            accept="image/*"
+                            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                             capture="environment"
                             ref={fileInputRef}
                             onChange={handleFileChange}
