@@ -82,7 +82,7 @@ Trust Wizard is built to be installed natively. Host the static files on any fre
 ## Tech Stack
 - **Framework:** React + Vite
 - **Styling:** Vanilla CSS (Glassmorphism & CSS-Grid)
-- **State/Storage:** React Hooks + IndexedDB (`localforage`)
+- **State/Storage:** React Hooks + IndexedDB (`localforage` + `jszip`)
 - **Data Visualization:** Recharts
 - **Icons:** Lucide React
 
