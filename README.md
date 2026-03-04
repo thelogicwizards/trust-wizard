@@ -30,7 +30,19 @@ Visualize 25 years of compounding mutual dividend crediting rates. Anchored dire
 ### 4. Dynamic Legal Templates (Crummey Notices)
 Ensure your trust gifts remain tax-exempt (under the annual exclusion) by generating formal "Crummey Notice" right-of-withdrawal letters. The integrated generator accepts dynamic inputs and outputs a print-ready, legally worded document complete with signature blocks.
 
-### 5. Progressive Web App (PWA) Ready
+### 5. Document Creation Wizard
+Generate, print, and securely scan formal Certifications of Trust via your device camera natively into the IndexedDB Vault without external processing.
+
+### 6. Vault Backup & Restore
+Bundle your full Trust `config.json` state and embedded Base64 image files into an encrypted `.zip` archive for secure local backups and instantaneous full-state restorations.
+
+### 7. Emergency Successor Export
+Instantly generate a standalone HTML package bundling all portfolio metrics, policies, and embedded trust documents for crucial offline access by successor trustees.
+
+### 8. Annual Compliance Tracker
+Track and manually configure required annual Trust upkeep tasks—such as Crummey notices, entity fees, and trustee meetings—using a persistent dashboard widget.
+
+### 9. Progressive Web App (PWA) Ready
 Trust Wizard is built to be installed natively. Host the static files on any free cloud edge network (e.g., Vercel, GitHub Pages), and "Install" the application directly to your macOS, iOS, Windows, or Android device for a standalone, full-screen experience.
 
 ## 🚀 Quick Start (Local Development)
