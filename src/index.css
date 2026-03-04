@@ -250,6 +250,67 @@ h3,
     border-color: #ef4444;
 }
 
+.action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    color: #fff;
+    padding: 0.35rem 0.6rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.gold {
+    background: var(--accent-gold-glow);
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+}
+
+.action-btn.gold:hover {
+    background: rgba(212, 175, 55, 0.25);
+}
+
+.action-btn.solid-gold {
+    background: var(--accent-gold);
+    border: none;
+    color: #000;
+}
+
+.action-btn.solid-gold:hover {
+    background: #e5c048;
+}
+
+.action-btn.danger {
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px dashed rgba(220, 38, 38, 0.4);
+    color: #f87171;
+}
+
+.action-btn.danger:hover {
+    background: rgba(220, 38, 38, 0.25);
+}
+
+.action-btn.info {
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(14, 165, 233, 0.4);
+    color: #38bdf8;
+}
+
+.action-btn.info:hover {
+    background: rgba(14, 165, 233, 0.25);
+}
+
 .stat-card:hover .edit-trigger {
     opacity: 1 !important;
 }
@@ -395,5 +456,54 @@ h3,
         height: 80px;
         margin-bottom: 1rem;
         opacity: 0.8;
+    }
+}
+
+/* --- Dropdown Menus --- */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-color);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 220px;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.dropdown-menu .action-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.6rem 0.75rem;
+    background: transparent;
+    border: none;
+}
+
+.dropdown-menu .action-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* --- Responsive Visibility --- */
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-only {
+        display: none !important;
     }
 }

@@ -19,7 +19,8 @@ import {
     X,
     Plus,
     Trash2,
-    Printer
+    Printer,
+    Settings
 } from 'lucide-react';
 
 
@@ -40,7 +41,11 @@ import stateTemplates from './data/state_templates.json';
 import BorrowingCalculator from './components/BorrowingCalculator';
 import DividendChart from './components/DividendChart';
 import CrummeyNoticeGenerator from './components/CrummeyNoticeGenerator';
+import ComplianceTracker from './components/ComplianceTracker';
+import DocumentWizard from './components/DocumentWizard';
 import { loadTrustData, saveTrustData } from './utils/storage';
+import { exportVaultToZip, importVaultFromZip } from './utils/backup';
+import { generateSuccessorPackage } from './utils/successorExport';
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -451,16 +456,20 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 
     const handleSave = () => {
         if (selectedFile) {
-            const fileUrl = URL.createObjectURL(selectedFile);
-            onSave({
-                name,
-                category,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-                size: (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB',
-                fileUrl,
-                fileName: selectedFile.name,
-                fileType: selectedFile.type
-            });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64Url = reader.result;
+                onSave({
+                    name,
+                    category,
+                    date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+                    size: (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB',
+                    fileUrl: base64Url,
+                    fileName: selectedFile.name,
+                    fileType: selectedFile.type
+                });
+            };
+            reader.readAsDataURL(selectedFile);
         } else if (initialData) {
             onSave({
                 ...initialData,
@@ -590,6 +599,26 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
     const [isUnsupportedStateModalOpen, setIsUnsupportedStateModalOpen] = useState(false);
     const [unsupportedStateName, setUnsupportedStateName] = useState('');
     const [stateInput, setStateInput] = useState('');
+    const [isWizardOpen, setIsWizardOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const backupInputRef = React.useRef(null);
+
+    const handleExportBackup = async () => {
+        await exportVaultToZip();
+    };
+
+    const handleImportBackup = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const data = await importVaultFromZip(file);
+            if (data && data.documents) {
+                onUpdateDocuments(data.documents);
+                alert("Vault successfully restored from backup.");
+            }
+        }
+        e.target.value = ''; // Reset input so same file can be imported again if needed
+    };
 
 
     const handleAdd = () => {
@@ -797,79 +826,70 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 </span>
                             ))}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.75rem' }}>
-                            <button
-                                onClick={handleRestoreDefaults}
-                                style={{
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--glass-border)',
-                                    borderRadius: '8px',
-                                    color: '#fff',
-                                    padding: '0.4rem 1rem',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.4rem',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                <History size={16} /> Restore Defaults
-                            </button>
-                            <button
-                                onClick={handleLoadStateTemplates}
-                                style={{
-                                    background: 'rgba(14, 165, 233, 0.15)',
-                                    border: '1px solid rgba(14, 165, 233, 0.4)',
-                                    borderRadius: '8px',
-                                    color: '#38bdf8',
-                                    padding: '0.4rem 1rem',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.4rem',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                <Landmark size={16} /> Load State Templates
-                            </button>
-                            <button
-                                onClick={() => setIsPrintModalOpen(true)}
-                                style={{
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--glass-border)',
-                                    borderRadius: '8px',
-                                    color: '#fff',
-                                    padding: '0.4rem 1rem',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.4rem',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                <Printer size={16} /> Print Portfolio
-                            </button>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end', position: 'relative' }}>
+                            {/* Desktop Advanced Actions */}
+                            <div className="desktop-only" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                <button onClick={handleRestoreDefaults} className="action-btn">
+                                    <History size={14} /> Restore Defaults
+                                </button>
+                                <button onClick={handleLoadStateTemplates} className="action-btn info">
+                                    <Landmark size={14} /> Load State Templates
+                                </button>
+                                <button onClick={handleExportBackup} className="action-btn">
+                                    <Download size={14} /> Backup
+                                </button>
+                                <button onClick={() => backupInputRef.current.click()} className="action-btn">
+                                    <History size={14} /> Restore
+                                </button>
+                                <button onClick={() => setIsPrintModalOpen(true)} className="action-btn">
+                                    <Printer size={14} /> Print Portfolio
+                                </button>
+                                <button onClick={generateSuccessorPackage} className="action-btn danger">
+                                    <Download size={14} /> Successor Export
+                                </button>
+                            </div>
 
-                            <button
-                                onClick={handleAdd}
-                                style={{
-                                    background: 'var(--accent-gold)',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    color: '#000',
-                                    padding: '0.4rem 1rem',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.4rem',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                <Plus size={16} /> Add Document
+                            {/* Mobile Advanced Actions Menu */}
+                            <div className="mobile-only dropdown-container">
+                                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="action-btn">
+                                    <Settings size={14} /> Advanced
+                                </button>
+                                {isDropdownOpen && (
+                                    <div className="dropdown-menu">
+                                        <button onClick={() => { handleRestoreDefaults(); setIsDropdownOpen(false); }} className="action-btn">
+                                            <History size={14} /> Restore Defaults
+                                        </button>
+                                        <button onClick={() => { handleLoadStateTemplates(); setIsDropdownOpen(false); }} className="action-btn info">
+                                            <Landmark size={14} /> Load State Templates
+                                        </button>
+                                        <button onClick={() => { handleExportBackup(); setIsDropdownOpen(false); }} className="action-btn">
+                                            <Download size={14} /> Backup
+                                        </button>
+                                        <button onClick={() => { backupInputRef.current.click(); setIsDropdownOpen(false); }} className="action-btn">
+                                            <History size={14} /> Restore
+                                        </button>
+                                        <button onClick={() => { setIsPrintModalOpen(true); setIsDropdownOpen(false); }} className="action-btn">
+                                            <Printer size={14} /> Print Portfolio
+                                        </button>
+                                        <button onClick={() => { generateSuccessorPackage(); setIsDropdownOpen(false); }} className="action-btn danger">
+                                            <Download size={14} /> Successor Export
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <input
+                                type="file"
+                                accept=".zip"
+                                ref={backupInputRef}
+                                onChange={handleImportBackup}
+                                style={{ display: 'none' }}
+                            />
+                            <button onClick={() => setIsWizardOpen(true)} className="action-btn gold">
+                                <ShieldCheck size={14} /> Create via Wizard
+                            </button>
+                            <button onClick={handleAdd} className="action-btn solid-gold">
+                                <Plus size={14} /> Upload Single
                             </button>
                         </div>
                     </div>
@@ -921,6 +941,12 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                 initialData={editingDoc}
             />
 
+            <DocumentWizard
+                isOpen={isWizardOpen}
+                onClose={() => setIsWizardOpen(false)}
+                onSave={handleSave}
+            />
+
             <PrintSettingsModal
                 isOpen={isPrintModalOpen}
                 onClose={() => setIsPrintModalOpen(false)}
@@ -928,115 +954,121 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
             />
 
             {/* Restore Defaults Modal */}
-            {isRestoreModalOpen && (
-                <div className="modal-overlay">
-                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
-                        <h3 className="card-title">
-                            <History size={20} color="#d4af37" />
-                            Restore Default Templates
-                        </h3>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                            This will add missing default templates back to your vault. Existing documents will not be deleted. Do you want to continue?
-                        </p>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button
-                                onClick={confirmRestoreDefaults}
-                                style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
-                            >
-                                Continue
-                            </button>
-                            <button
-                                onClick={() => setIsRestoreModalOpen(false)}
-                                style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Load State Templates Modal */}
-            {isLoadStateModalOpen && (
-                <div className="modal-overlay">
-                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
-                        <h3 className="card-title">
-                            <Landmark size={20} color="#38bdf8" />
-                            Load State Templates
-                        </h3>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
-                            Enter your state (e.g., California, Florida, Texas, New York) to load specific required trust templates:
-                        </p>
-                        <form onSubmit={submitLoadStateTemplates}>
-                            <input
-                                type="text"
-                                value={stateInput}
-                                onChange={(e) => setStateInput(e.target.value)}
-                                placeholder="Enter state name"
-                                autoFocus
-                                style={{
-                                    width: '100%',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--glass-border)',
-                                    borderRadius: '12px',
-                                    padding: '0.75rem 1rem',
-                                    color: '#fff',
-                                    marginBottom: '1.5rem'
-                                }}
-                            />
+            {
+                isRestoreModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                            <h3 className="card-title">
+                                <History size={20} color="#d4af37" />
+                                Restore Default Templates
+                            </h3>
+                            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                                This will add missing default templates back to your vault. Existing documents will not be deleted. Do you want to continue?
+                            </p>
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 <button
-                                    type="submit"
+                                    onClick={confirmRestoreDefaults}
                                     style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
                                 >
-                                    Load
+                                    Continue
                                 </button>
                                 <button
-                                    type="button"
-                                    onClick={() => setIsLoadStateModalOpen(false)}
+                                    onClick={() => setIsRestoreModalOpen(false)}
                                     style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
                                 >
                                     Cancel
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
+
+            {/* Load State Templates Modal */}
+            {
+                isLoadStateModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                            <h3 className="card-title">
+                                <Landmark size={20} color="#38bdf8" />
+                                Load State Templates
+                            </h3>
+                            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
+                                Enter your state (e.g., California, Florida, Texas, New York) to load specific required trust templates:
+                            </p>
+                            <form onSubmit={submitLoadStateTemplates}>
+                                <input
+                                    type="text"
+                                    value={stateInput}
+                                    onChange={(e) => setStateInput(e.target.value)}
+                                    placeholder="Enter state name"
+                                    autoFocus
+                                    style={{
+                                        width: '100%',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        border: '1px solid var(--glass-border)',
+                                        borderRadius: '12px',
+                                        padding: '0.75rem 1rem',
+                                        color: '#fff',
+                                        marginBottom: '1.5rem'
+                                    }}
+                                />
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        type="submit"
+                                        style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
+                                    >
+                                        Load
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsLoadStateModalOpen(false)}
+                                        style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )
+            }
 
             {/* Unsupported State Modal */}
-            {isUnsupportedStateModalOpen && (
-                <div className="modal-overlay">
-                    <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
-                        <h3 className="card-title">
-                            <Info size={20} color="#38bdf8" />
-                            State Not Specifically Covered
-                        </h3>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
-                            We do not currently have specific template automation for <strong>{unsupportedStateName}</strong>.
-                        </p>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                            However, most simple trusts rely solely on the Universal Templates provided. If your state requires local forms (like specific deeds or affidavits), please add them manually using the "Add Document" button.
-                        </p>
-                        <div style={{ padding: '1rem', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '12px', border: '1px solid rgba(14, 165, 233, 0.2)', marginBottom: '1.5rem' }}>
-                            <p style={{ fontSize: '0.85rem', color: '#fff', margin: 0 }}>
-                                Need specific forms for {unsupportedStateName}? Contact support to request them: <br />
-                                <a href={`mailto:craig@logicwizards.one?subject=Trust Agent - Request Templates for ${unsupportedStateName}`} style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>craig@logicwizards.one</a>
+            {
+                isUnsupportedStateModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="glass-panel modal-content anim-fade-in" style={{ maxWidth: '400px' }}>
+                            <h3 className="card-title">
+                                <Info size={20} color="#38bdf8" />
+                                State Not Specifically Covered
+                            </h3>
+                            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1rem', lineHeight: '1.5' }}>
+                                We do not currently have specific template automation for <strong>{unsupportedStateName}</strong>.
                             </p>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button
-                                type="button"
-                                onClick={() => setIsUnsupportedStateModalOpen(false)}
-                                style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
-                            >
-                                I Understand
-                            </button>
+                            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                                However, most simple trusts rely solely on the Universal Templates provided. If your state requires local forms (like specific deeds or affidavits), please add them manually using the "Add Document" button.
+                            </p>
+                            <div style={{ padding: '1rem', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '12px', border: '1px solid rgba(14, 165, 233, 0.2)', marginBottom: '1.5rem' }}>
+                                <p style={{ fontSize: '0.85rem', color: '#fff', margin: 0 }}>
+                                    Need specific forms for {unsupportedStateName}? Contact support to request them: <br />
+                                    <a href={`mailto:craig@logicwizards.one?subject=Trust Agent - Request Templates for ${unsupportedStateName}`} style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>craig@logicwizards.one</a>
+                                </p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsUnsupportedStateModalOpen(false)}
+                                    style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', border: 'none', borderRadius: '12px', color: '#000', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                    I Understand
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 
@@ -1302,6 +1334,9 @@ function App() {
                                 </button>
                             </div>
 
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <ComplianceTracker />
+                            </div>
 
                             <div className="glass-panel">
                                 <h3 className="card-title">
