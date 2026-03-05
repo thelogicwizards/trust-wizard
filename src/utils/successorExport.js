@@ -13,14 +13,73 @@ export const generateSuccessorPackage = async () => {
 
         let policiesHtml = "<p>No insurance policies recorded.</p>";
         if (trustData.policies && trustData.policies.length > 0) {
-            policiesHtml = trustData.policies.map((p, i) => `
+            policiesHtml = trustData.policies.map((p, i) => {
+                let ledgerHtml = '';
+                if (p.transactions && p.transactions.length > 0) {
+                    const rows = [...p.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).map(tx => {
+                        if (tx.type === 'PREMIUM') {
+                            return `<tr><td>${tx.date}</td><td>${tx.note || 'Premium'}</td><td class="positive">+$${tx.amount.toLocaleString()}</td><td>-</td><td>-</td></tr>`;
+                        } else {
+                            return `<tr><td>${tx.date}</td><td>${tx.note || 'Statement Update'}</td><td>-</td><td>$${tx.cashValue.toLocaleString()}</td><td>$${tx.deathBenefit.toLocaleString()}</td></tr>`;
+                        }
+                    }).join('');
+
+                    ledgerHtml = `
+                    <details style="margin-top: 1.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+                        <summary style="padding: 1rem; cursor: pointer; color: var(--gold); font-weight: 600; outline: none; user-select: none;">
+                            <span class="acc-arrow">&#9656;</span> Transaction Ledger
+                        </summary>
+                        <div style="padding: 0 1rem 1rem 1rem;">
+                            <table class="ledger-table" style="margin-top: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type/Note</th>
+                                        <th>Premium Paid</th>
+                                        <th>Statement CV</th>
+                                        <th>Statement DB</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                    `;
+                }
+
+                // Determine latest real CV based on TRUE_UPs if available, fallback to static
+                let displayCV = p.cashValue || 0;
+                let displayDB = p.deathBenefit || 0;
+                if (p.transactions) {
+                    const trueUps = p.transactions.filter(t => t.type === 'TRUE_UP').sort((a, b) => new Date(b.date) - new Date(a.date));
+                    if (trueUps.length > 0) {
+                        displayCV = trueUps[0].cashValue;
+                        displayDB = trueUps[0].deathBenefit;
+                    }
+                }
+
+                return `
                 <div class="card">
                     <h3>Policy ${i + 1}: ${p.carrier}</h3>
-                    <p><strong>Insured:</strong> ${p.insured}</p>
-                    <p><strong>Death Benefit:</strong> $${p.deathBenefit.toLocaleString()}</p>
-                    <p><strong>Current Cash Value:</strong> $${p.cashValue.toLocaleString()}</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <p><strong>Insured:</strong> ${p.insured}</p>
+                            <p><strong>Issue Date:</strong> ${p.issueDate || 'Unknown'}</p>
+                            <p><strong>Loan Interest Rate:</strong> ${p.loanInterestRate}%</p>
+                        </div>
+                        <div>
+                            <p><strong>Latest Statement DB:</strong> $${displayDB.toLocaleString()}</p>
+                            <p><strong>Latest Statement CV:</strong> $${displayCV.toLocaleString()}</p>
+                            <p><strong>Base Annual Premium:</strong> $${(p.baseAnnualPremium || 0).toLocaleString()}</p>
+                            <p><strong>Planned Annual PUA:</strong> $${(p.plannedAnnualPUA || 0).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    ${ledgerHtml}
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         let documentsHtml = "<p>No required documents on file.</p>";
@@ -121,6 +180,15 @@ export const generateSuccessorPackage = async () => {
                 }
                 .doc-placeholder { color: var(--dim); font-style: italic; padding: 2rem; }
                 
+                .ledger-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
+                .ledger-table th, .ledger-table td { border: 1px solid rgba(255,255,255,0.1); padding: 0.75rem; text-align: left; }
+                .ledger-table th { background: rgba(0,0,0,0.2); color: var(--text); }
+                .positive { color: #10b981; }
+                
+                details > summary { list-style: none; }
+                summary::-webkit-details-marker { display: none; }
+                details[open] .acc-arrow { transform: rotate(90deg); display: inline-block; transition: 0.2s; }
+                
                 .footer {text-align: center; padding: 3rem 0; color: var(--dim); font-size: 0.85rem;}
                 
                 @media print {
@@ -130,6 +198,8 @@ export const generateSuccessorPackage = async () => {
                     .header h1, .card h3 { color: #000; }
                     .warning-box { border: 1px solid #000; }
                     .doc-container { background: #fff; }
+                    .ledger-table th, .ledger-table td { border: 1px solid #ccc; }
+                    .ledger-table th { background: #f1f5f9; color: #000; }
                 }
             </style>
         </head>

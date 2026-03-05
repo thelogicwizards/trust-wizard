@@ -18,9 +18,11 @@ import {
     Check,
     X,
     Plus,
+    Menu,
     Trash2,
     Printer,
-    Settings
+    Settings,
+    List
 } from 'lucide-react';
 
 
@@ -52,8 +54,13 @@ const CustomTooltip = ({ active, payload, label }) => {
         return (
             <div className="glass-panel" style={{ padding: '1rem', border: '1px solid rgba(212, 175, 55, 0.2)' }}>
                 <p className="premium-text" style={{ color: '#d4af37', marginBottom: '0.5rem', fontWeight: 600 }}>{label}</p>
-                <p style={{ fontSize: '0.85rem' }}>Cash Value: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>${payload[0].value.toLocaleString()}</span></p>
-                <p style={{ fontSize: '0.85rem' }}>Death Benefit: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>${payload[1].value.toLocaleString()}</span></p>
+                <p style={{ fontSize: '0.85rem' }}>Cash Value: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>${payload[0]?.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></p>
+                <p style={{ fontSize: '0.85rem' }}>Death Benefit: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>${payload[1]?.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></p>
+                {payload[2] && (
+                    <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.5rem' }}>
+                        Cum. Premium: <span style={{ color: '#ef4444', fontWeight: 600 }}>${payload[2].value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                    </p>
+                )}
             </div>
         );
     }
@@ -130,9 +137,12 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
     const [formData, setFormData] = useState({
         carrier: '',
         insured: '',
+        issueDate: new Date().toISOString().split('T')[0], // Default today
         cashValue: '',
         deathBenefit: '',
-        loanInterestRate: ''
+        loanInterestRate: '',
+        baseAnnualPremium: '',
+        plannedAnnualPUA: ''
     });
 
     if (!isOpen) return null;
@@ -142,11 +152,14 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
         onSave({
             carrier: formData.carrier || 'Unknown Carrier',
             insured: formData.insured || 'Unknown Insured',
+            issueDate: formData.issueDate || new Date().toISOString().split('T')[0],
             cashValue: Number(formData.cashValue) || 0,
             deathBenefit: Number(formData.deathBenefit) || 0,
             loanInterestRate: Number(formData.loanInterestRate) || 0,
+            baseAnnualPremium: Number(formData.baseAnnualPremium) || 0,
+            plannedAnnualPUA: Number(formData.plannedAnnualPUA) || 0,
         });
-        setFormData({ carrier: '', insured: '', cashValue: '', deathBenefit: '', loanInterestRate: '' });
+        setFormData({ carrier: '', insured: '', issueDate: new Date().toISOString().split('T')[0], cashValue: '', deathBenefit: '', loanInterestRate: '', baseAnnualPremium: '', plannedAnnualPUA: '' });
     };
 
     return (
@@ -166,6 +179,10 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
                         <input type="text" value={formData.insured} onChange={e => setFormData({ ...formData, insured: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
                     </div>
                     <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Issue Date</label>
+                        <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                    </div>
+                    <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
                         <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
                     </div>
@@ -177,6 +194,14 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
                         <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Loan Interest Rate (%)</label>
                         <input type="number" step="0.1" value={formData.loanInterestRate} onChange={e => setFormData({ ...formData, loanInterestRate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
                     </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Base Annual Premium ($)</label>
+                        <input type="number" value={formData.baseAnnualPremium} onChange={e => setFormData({ ...formData, baseAnnualPremium: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Planned Annual PUA ($)</label>
+                        <input type="number" value={formData.plannedAnnualPUA} onChange={e => setFormData({ ...formData, plannedAnnualPUA: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                    </div>
                     <button type="submit" style={{ width: '100%', padding: '1rem', background: 'var(--accent-gold)', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', marginTop: '0.5rem' }}>Save Policy</button>
                 </form>
             </div>
@@ -184,7 +209,128 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
     );
 };
 
-const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy }) => (
+const PolicyLedgerModal = ({ isOpen, onClose, policy, onAddTransaction }) => {
+    const [txType, setTxType] = useState('PREMIUM'); // 'PREMIUM' or 'TRUE_UP'
+    const [formData, setFormData] = useState({
+        date: new Date().toISOString().split('T')[0],
+        amount: '',
+        cashValue: '',
+        deathBenefit: '',
+        note: ''
+    });
+
+    if (!isOpen || !policy) return null;
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const tx = {
+            id: `tx_${Date.now()}`,
+            type: txType,
+            date: formData.date,
+            note: formData.note || (txType === 'PREMIUM' ? 'Premium Payment' : 'Statement True-Up')
+        };
+
+        if (txType === 'PREMIUM') {
+            tx.amount = Number(formData.amount) || 0;
+        } else {
+            tx.cashValue = Number(formData.cashValue) || 0;
+            tx.deathBenefit = Number(formData.deathBenefit) || 0;
+        }
+
+        onAddTransaction(policy.id, tx);
+        setFormData({ date: new Date().toISOString().split('T')[0], amount: '', cashValue: '', deathBenefit: '', note: '' });
+    };
+
+    const sortedTransactions = [...(policy.transactions || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h3 style={{ margin: 0, color: '#fff' }}>Trust Ledger: {policy.carrier}</h3>
+                    <button onClick={onClose} className="icon-btn" type="button"><X size={18} /></button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Base Annual Premium</div>
+                        <div style={{ fontSize: '1.1rem', color: '#fff' }}>${(policy.baseAnnualPremium || 0).toLocaleString()}</div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Planned Annual PUA</div>
+                        <div style={{ fontSize: '1.1rem', color: '#fff' }}>${(policy.plannedAnnualPUA || 0).toLocaleString()}</div>
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ color: 'var(--accent-gold)', marginBottom: '1rem', borderBottom: '1px solid rgba(212, 175, 55, 0.2)', paddingBottom: '0.5rem' }}>Log Transaction</h4>
+                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                        <button onClick={() => setTxType('PREMIUM')} style={{ flex: 1, padding: '0.5rem', background: txType === 'PREMIUM' ? 'var(--accent-gold)' : 'transparent', color: txType === 'PREMIUM' ? '#000' : 'var(--text-dim)', border: '1px solid var(--accent-gold)', borderRadius: '8px', cursor: 'pointer' }}>Premium Payment</button>
+                        <button onClick={() => setTxType('TRUE_UP')} style={{ flex: 1, padding: '0.5rem', background: txType === 'TRUE_UP' ? 'var(--accent-gold)' : 'transparent', color: txType === 'TRUE_UP' ? '#000' : 'var(--text-dim)', border: '1px solid var(--accent-gold)', borderRadius: '8px', cursor: 'pointer' }}>Statement True-Up</button>
+                    </div>
+
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(0,0,0,0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <div style={{ flex: 1 }}>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Date</label>
+                                <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            {txType === 'PREMIUM' ? (
+                                <div style={{ flex: 1 }}>
+                                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Amount ($)</label>
+                                    <input type="number" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                </div>
+                            ) : (
+                                <>
+                                    <div style={{ flex: 1 }}>
+                                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Statement CV ($)</label>
+                                        <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Statement DB ($)</label>
+                                        <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Note/Description</label>
+                            <input type="text" value={formData.note} onChange={e => setFormData({ ...formData, note: e.target.value })} placeholder={txType === 'PREMIUM' ? "e.g., Annual Base + PUA" : "e.g., 2024 Annual Statement"} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} />
+                        </div>
+                        <button type="submit" style={{ width: '100%', padding: '0.75rem', background: 'transparent', color: 'var(--accent-gold)', border: '1px solid var(--accent-gold)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', marginTop: '0.5rem' }}>Log Record</button>
+                    </form>
+                </div>
+
+                <div>
+                    <h4 style={{ color: 'var(--text-dim)', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Transaction History</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {sortedTransactions.map(tx => (
+                            <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', fontSize: '0.9rem' }}>
+                                <div>
+                                    <div style={{ color: '#fff', fontWeight: 600, marginBottom: '0.2rem' }}>{tx.note || tx.type.replace('_', ' ')}</div>
+                                    <div style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>{tx.date}</div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    {tx.type === 'PREMIUM' ? (
+                                        <div style={{ color: '#ef4444', fontWeight: 600 }}>+${tx.amount.toLocaleString()}</div>
+                                    ) : (
+                                        <>
+                                            <div style={{ color: 'var(--accent-gold)' }}>CV: ${tx.cashValue.toLocaleString()}</div>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>DB: ${tx.deathBenefit.toLocaleString()}</div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                        {sortedTransactions.length === 0 && <div style={{ color: 'var(--text-dim)', fontStyle: 'italic', textAlign: 'center', padding: '1rem' }}>No transactions logged.</div>}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy, onOpenLedger }) => (
     <div className="main-content anim-fade-in">
 
         <div className="glass-panel" style={{ marginBottom: '2rem' }}>
@@ -199,6 +345,10 @@ const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy })
                             <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} />
                                 <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="colorPremium" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
+                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -232,6 +382,15 @@ const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy })
                             stroke="rgba(226, 232, 240, 0.2)"
                             strokeWidth={1}
                             fill="transparent"
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="premium"
+                            stroke="#ef4444"
+                            strokeDasharray="4 4"
+                            strokeWidth={2}
+                            fillOpacity={1}
+                            fill="url(#colorPremium)"
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -272,17 +431,27 @@ const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy })
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ color: 'var(--accent-gold)', fontWeight: 600 }}>CV: ${p.cashValue.toLocaleString()}</div>
-                                <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>DB: ${p.deathBenefit.toLocaleString()}</div>
+                                <div style={{ color: 'var(--accent-gold)', fontWeight: 600 }}>CV: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.cashValue || p.cashValue || 0).toLocaleString()}</div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>DB: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.deathBenefit || p.deathBenefit || 0).toLocaleString()}</div>
                             </div>
-                            <button
-                                onClick={() => onDeletePolicy(p.id)}
-                                className="icon-btn"
-                                style={{ color: '#ef4444', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
-                                title="Delete Policy"
-                            >
-                                <Trash2 size={18} />
-                            </button>
+                            <div style={{ display: 'flex' }}>
+                                <button
+                                    onClick={() => onOpenLedger(p)}
+                                    className="icon-btn"
+                                    style={{ color: 'var(--accent-gold)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
+                                    title="View Ledger / Update Values"
+                                >
+                                    <List size={18} />
+                                </button>
+                                <button
+                                    onClick={() => onDeletePolicy(p.id)}
+                                    className="icon-btn"
+                                    style={{ color: '#ef4444', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
+                                    title="Delete Policy"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -592,6 +761,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [editingDoc, setEditingDoc] = useState(null);
+    const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
     // New Modal States
     const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
@@ -807,14 +977,14 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
 
     return (
         <div className="main-content anim-fade-in" style={{ width: '100%', gridColumn: 'span 2' }}>
-            <div className="glass-panel">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>
-                        <FileText size={20} color="#d4af37" />
-                        Trust Document Vault
+            <div className="glass-panel" style={{ position: 'relative' }}>
+                <div className="doc-header-top">
+                    <h2 className="card-title doc-section-title">
+                        <FileText size={20} color="#d4af37" className="doc-section-icon" />
+                        <span>Trust Document Vault</span>
                     </h2>
-                    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div className="doc-header-actions">
+                        <div className="desktop-only" style={{ display: 'flex', gap: '0.5rem' }}>
                             {['All', 'Legal', 'Policy', 'Funding'].map(cat => (
                                 <span
                                     key={cat}
@@ -826,7 +996,26 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 </span>
                             ))}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end', position: 'relative' }}>
+                        <div className="mobile-only dropdown-container">
+                            <button onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)} className="action-btn" style={{ fontSize: '0.85rem' }}>
+                                <Menu size={16} /> Categories ({filter})
+                            </button>
+                            {isCategoryMenuOpen && (
+                                <div className="dropdown-menu" style={{ minWidth: '150px', left: 0, right: 'auto' }}>
+                                    {['All', 'Legal', 'Policy', 'Funding'].map(cat => (
+                                        <button
+                                            key={cat}
+                                            onClick={() => { setFilter(cat); setIsCategoryMenuOpen(false); }}
+                                            className={`action-btn ${filter === cat ? 'gold' : ''}`}
+                                            style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem 0.75rem', border: 'none' }}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <div className="doc-actions-wrapper">
                             {/* Desktop Advanced Actions */}
                             <div className="desktop-only" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                 <button onClick={handleRestoreDefaults} className="action-btn">
@@ -855,7 +1044,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                     <Settings size={14} /> Advanced
                                 </button>
                                 {isDropdownOpen && (
-                                    <div className="dropdown-menu">
+                                    <div className="dropdown-menu" style={{ right: '-70px' }}>
                                         <button onClick={() => { handleRestoreDefaults(); setIsDropdownOpen(false); }} className="action-btn">
                                             <History size={14} /> Restore Defaults
                                         </button>
@@ -1068,6 +1257,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                     </div>
                 )
             }
+            <CrummeyNoticeGenerator />
         </div >
     );
 };
@@ -1119,8 +1309,7 @@ const FundingContent = ({ stats }) => {
                             </p>
                             <button
                                 onClick={() => setShowCalculator(true)}
-                                className="nav-link active"
-                                style={{ padding: '0.75rem 2rem', background: 'var(--accent-gold)', color: '#000', borderRadius: '12px', fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                                style={{ padding: '0.75rem 2rem', background: 'var(--accent-gold)', color: '#000', borderRadius: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
                             >
                                 Launch Simulator
                             </button>
@@ -1177,8 +1366,6 @@ const EnlightenmentContent = ({ modules }) => {
                 ))}
             </div>
 
-            <CrummeyNoticeGenerator />
-
             <DeepDiveModal
                 isOpen={!!selectedModule}
                 onClose={() => setSelectedModule(null)}
@@ -1194,6 +1381,8 @@ function App() {
     const [trust, setTrust] = useState(trustData);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
+    const [ledgerPolicy, setLedgerPolicy] = useState(null); // The policy currently viewed in the ledger modal
+    const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
 
     React.useEffect(() => {
         const initDB = async () => {
@@ -1214,52 +1403,127 @@ function App() {
 
     const aggregateStats = React.useMemo(() => {
         if (!trust.policies || trust.policies.length === 0) return { totalCashValue: 0, deathBenefit: 0, maxLoanAmount: 0, loanInterestRate: 4.5 };
-        const totalCashValue = trust.policies.reduce((sum, p) => sum + p.cashValue, 0);
-        const deathBenefit = trust.policies.reduce((sum, p) => sum + p.deathBenefit, 0);
-        const loanInterestRate = trust.policies.reduce((max, p) => Math.max(max, p.loanInterestRate), 0) || 4.5;
+
+        let totalCashValue = 0;
+        let deathBenefit = 0;
+        let maxLoanRate = 0;
+
+        trust.policies.forEach(p => {
+            // Find latest TRUE_UP for current real values
+            let currentCV = p.cashValue || 0;
+            let currentDB = p.deathBenefit || 0;
+            if (p.transactions && p.transactions.length > 0) {
+                const trueUps = p.transactions.filter(t => t.type === 'TRUE_UP').sort((a, b) => new Date(b.date) - new Date(a.date));
+                if (trueUps.length > 0) {
+                    currentCV = trueUps[0].cashValue;
+                    currentDB = trueUps[0].deathBenefit;
+                }
+            }
+            totalCashValue += currentCV;
+            deathBenefit += currentDB;
+            if (p.loanInterestRate > maxLoanRate) maxLoanRate = p.loanInterestRate;
+        });
 
         return {
             totalCashValue,
             deathBenefit,
             maxLoanAmount: Math.floor(totalCashValue * 0.9),
-            loanInterestRate
+            loanInterestRate: maxLoanRate || 4.5
         };
     }, [trust.policies]);
+
+    // Dynamic Projection Generator
+    const generateDynamicProjection = React.useCallback((policy) => {
+        const projectionData = [];
+
+        // Find latest true up baseline
+        let baselineDate = new Date(policy.issueDate);
+        let currentCash = policy.cashValue || 0;
+        let currentDeath = policy.deathBenefit || 0;
+        let cumulativePremium = 0;
+
+        if (policy.transactions && policy.transactions.length > 0) {
+            // Calculate total premiums paid up to baseline
+            const premiums = policy.transactions.filter(t => t.type === 'PREMIUM');
+            cumulativePremium = premiums.reduce((sum, t) => sum + t.amount, 0);
+
+            const trueUps = policy.transactions.filter(t => t.type === 'TRUE_UP').sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (trueUps.length > 0) {
+                baselineDate = new Date(trueUps[0].date);
+                currentCash = trueUps[0].cashValue;
+                currentDeath = trueUps[0].deathBenefit;
+            }
+        }
+
+        const startYear = baselineDate.getFullYear();
+        const basePremium = policy.baseAnnualPremium || 0;
+        const puaPremium = policy.plannedAnnualPUA || 0;
+        const totalAnnualPremium = basePremium + puaPremium;
+
+        // Project 30 years forward from baseline year
+        for (let i = 0; i < 30; i++) {
+            const year = startYear + i;
+            if (i > 0) {
+                // Growth heuristic: 5% on cash + 100% of PUA + 70% of base
+                currentCash = (currentCash * 1.05) + puaPremium + (basePremium * 0.7);
+                currentDeath = currentDeath * 1.02;
+                cumulativePremium += totalAnnualPremium;
+            }
+            projectionData.push({
+                name: `${year}`,
+                cash: Math.floor(currentCash),
+                death: Math.floor(currentDeath),
+                premium: Math.floor(cumulativePremium)
+            });
+        }
+        return projectionData;
+    }, []);
 
     const aggregateProjection = React.useMemo(() => {
         if (!trust.policies || trust.policies.length === 0) return [];
         const combined = {};
+
         trust.policies.forEach(p => {
-            if (p.projectionData) {
-                p.projectionData.forEach(pt => {
-                    if (!combined[pt.name]) combined[pt.name] = { name: pt.name, cash: 0, death: 0 };
-                    combined[pt.name].cash += pt.cash;
-                    combined[pt.name].death += pt.death;
-                });
-            }
+            const dynamicData = generateDynamicProjection(p);
+            dynamicData.forEach(pt => {
+                if (!combined[pt.name]) combined[pt.name] = { name: pt.name, cash: 0, death: 0, premium: 0 };
+                combined[pt.name].cash += pt.cash;
+                combined[pt.name].death += pt.death;
+                combined[pt.name].premium += pt.premium;
+            });
         });
-        return Object.values(combined);
-    }, [trust.policies]);
+
+        return Object.values(combined).sort((a, b) => {
+            return parseInt(a.name) - parseInt(b.name);
+        });
+    }, [trust.policies, generateDynamicProjection]);
 
     const handleSavePolicy = (policyData) => {
         const generatedId = `pol_${Math.floor(Math.random() * 10000)}`;
-        const cv = policyData.cashValue;
-        const db = policyData.deathBenefit;
-        const projectionData = [
-            { name: "Year 1", cash: cv * 1.05, death: db * 1.01 },
-            { name: "Year 3", cash: cv * 1.15, death: db * 1.03 },
-            { name: "Year 5", cash: cv * 1.30, death: db * 1.05 },
-            { name: "Year 7", cash: cv * 1.45, death: db * 1.07 },
-            { name: "Year 10", cash: cv * 1.70, death: db * 1.10 },
-            { name: "Year 15", cash: cv * 2.20, death: db * 1.15 },
-            { name: "Year 20", cash: cv * 2.80, death: db * 1.25 }
-        ];
 
         const newPolicy = {
             id: generatedId,
-            ...policyData,
-            projectionData
+            carrier: policyData.carrier,
+            insured: policyData.insured,
+            issueDate: policyData.issueDate,
+            baseAnnualPremium: policyData.baseAnnualPremium,
+            plannedAnnualPUA: policyData.plannedAnnualPUA,
+            loanInterestRate: policyData.loanInterestRate,
+            // Initial legacy fields for fallback, though transactions serve as source of truth now
+            cashValue: policyData.cashValue,
+            deathBenefit: policyData.deathBenefit,
+            transactions: [
+                {
+                    id: `tx_${Date.now()}`,
+                    type: 'TRUE_UP',
+                    date: policyData.issueDate,
+                    cashValue: policyData.cashValue,
+                    deathBenefit: policyData.deathBenefit,
+                    note: 'Initial Policy Link'
+                }
+            ]
         };
+
         setTrust(prev => ({
             ...prev,
             policies: [...(prev.policies || []), newPolicy]
@@ -1274,20 +1538,44 @@ function App() {
         }));
     };
 
+    const handleAddTransaction = (policyId, transaction) => {
+        setTrust(prev => {
+            const policies = prev.policies.map(p => {
+                if (p.id === policyId) {
+                    return {
+                        ...p,
+                        transactions: [...(p.transactions || []), transaction]
+                    };
+                }
+                return p;
+            });
+            // Update the currently viewed ledger policy state too if it matches
+            if (ledgerPolicy && ledgerPolicy.id === policyId) {
+                setLedgerPolicy(policies.find(p => p.id === policyId));
+            }
+            return { ...prev, policies };
+        });
+    };
+
     return (
         <div className="app-container">
-            <nav className="navbar anim-fade-in">
+            <nav className="navbar anim-fade-in" style={{ position: 'relative' }}>
                 <div className="logo" onClick={() => setActiveTab('overview')} style={{ cursor: 'pointer' }}>
                     <Landmark size={28} />
                     <span className="premium-text">TRUST WIZARD</span>
                 </div>
-                <div className="nav-links">
-                    <button className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>DASHBOARD</button>
-                    <button className={`nav-link ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>DOCUMENTS</button>
-                    <button className={`nav-link ${activeTab === 'funding' ? 'active' : ''}`} onClick={() => setActiveTab('funding')} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>FUNDING</button>
-                    <button className={`nav-link ${activeTab === 'enlightenment' ? 'active' : ''}`} onClick={() => setActiveTab('enlightenment')} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>ENLIGHTENMENT</button>
+                <div className="mobile-only">
+                    <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="action-btn" style={{ padding: '0.4rem' }}>
+                        {isNavMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
                 </div>
-                <div className="glass-panel" style={{ padding: '0.5rem 1rem', borderRadius: '12px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div className={`nav-links ${isNavMenuOpen ? 'mobile-open' : ''}`}>
+                    <button className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => { setActiveTab('overview'); setIsNavMenuOpen(false); }} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>DASHBOARD</button>
+                    <button className={`nav-link ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => { setActiveTab('documents'); setIsNavMenuOpen(false); }} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>DOCUMENTS</button>
+                    <button className={`nav-link ${activeTab === 'funding' ? 'active' : ''}`} onClick={() => { setActiveTab('funding'); setIsNavMenuOpen(false); }} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>FUNDING</button>
+                    <button className={`nav-link ${activeTab === 'enlightenment' ? 'active' : ''}`} onClick={() => { setActiveTab('enlightenment'); setIsNavMenuOpen(false); }} style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}>ENLIGHTENMENT</button>
+                </div>
+                <div className="glass-panel desktop-only" style={{ padding: '0.5rem 1rem', borderRadius: '12px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <ShieldCheck size={16} color="#d4af37" />
                     <span style={{ color: '#94a3b8' }}>Secure Session</span>
                 </div>
@@ -1302,6 +1590,7 @@ function App() {
                             policies={trust.policies}
                             onAddPolicy={() => setIsPolicyModalOpen(true)}
                             onDeletePolicy={handleDeletePolicy}
+                            onOpenLedger={setLedgerPolicy}
                         />
                         <div className="sidebar anim-fade-in" style={{ animationDelay: '0.4s' }}>
                             <div className="glass-panel" style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(23, 27, 34, 0.7) 100%)' }}>
@@ -1388,6 +1677,13 @@ function App() {
                 isOpen={isPolicyModalOpen}
                 onClose={() => setIsPolicyModalOpen(false)}
                 onSave={handleSavePolicy}
+            />
+
+            <PolicyLedgerModal
+                isOpen={!!ledgerPolicy}
+                policy={ledgerPolicy}
+                onClose={() => setLedgerPolicy(null)}
+                onAddTransaction={handleAddTransaction}
             />
         </div>
     );

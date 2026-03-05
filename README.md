@@ -18,14 +18,14 @@ All policy numbers, cash values, document metadata, and loan calculations are pe
 
 ## ✨ Key Features
 
-### 1. Global Multi-Policy Aggregation
-Dynamically link multiple insurance policies (specifying the carrier, insured party, cash value, death benefit, and individual interest rate). The engine instantly recalculates global trust equity and overarching borrowing capacity.
+### 1. Dynamic Multi-Policy Ledger
+Dynamically link multiple insurance policies by specifying their specific Issue Date, Base Premium, and Planned Paid-Up Additions. Rather than stagnant cash values, Trust Wizard tracks a chronological ledger of premium payments and Annual Statement True-Ups. The forecasting engine then uses this real-world chronological data to dynamically recalculate your 30-year projections, overarching borrowing capacity, and total trust equity on the fly.
 
 ### 2. Collateralized Borrowing Simulator
 Model unstructured policy loans against the trust's aggregated cash value. Instantly generate mathematically rigorous amortization schedules and export CSS-styled, print-ready formal loan illustrations for your physical records.
 
-### 3. Historical Dividend Heatmap
-Visualize 25 years of compounding mutual dividend crediting rates. Anchored directly to the dashboard, this interactive chart contextualizes the non-correlated growth mechanics foundational to Infinite Banking.
+### 3. Historical Dividend Heatmap & S&P 500 Overlay
+Visualize 25 years of compounding mutual dividend crediting rates. Anchored directly to the dashboard, this interactive chart contextualizes the non-correlated growth mechanics foundational to Infinite Banking. It allows you to toggle an overlay of S&P 500 historical returns to visually compare the volatility of the market against the guaranteed floor of your trust's whole life assets.
 
 ### 4. Dynamic Legal Templates (Crummey Notices)
 Ensure your trust gifts remain tax-exempt (under the annual exclusion) by generating formal "Crummey Notice" right-of-withdrawal letters. The integrated generator accepts dynamic inputs and outputs a print-ready, legally worded document complete with signature blocks.
@@ -42,8 +42,8 @@ Instantly generate a standalone HTML package bundling all portfolio metrics, pol
 ### 8. Annual Compliance Tracker
 Track and manually configure required annual Trust upkeep tasks—such as Crummey notices, entity fees, and trustee meetings—using a persistent dashboard widget.
 
-### 9. Progressive Web App (PWA) Ready
-Trust Wizard is built to be installed natively. Host the static files on any free cloud edge network (e.g., Vercel, GitHub Pages), and "Install" the application directly to your macOS, iOS, Windows, or Android device for a standalone, full-screen experience.
+### 9. Progressive Web App (PWA) Mobile Ready
+Trust Wizard is built from the ground up to be installed natively and features a responsive, mobile-first UI with a clean hamburger navigation. Host the static files on any free cloud edge network (e.g., Vercel, GitHub Pages), and "Install" the application directly to your macOS, iOS, Windows, or Android device for a standalone, full-screen experience that works completely offline.
 
 ## 🚀 Quick Start (Local Development)
 
