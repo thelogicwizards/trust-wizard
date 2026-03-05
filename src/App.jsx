@@ -164,43 +164,49 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '650px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h3 style={{ margin: 0, color: '#fff' }}>Link New Policy</h3>
                     <button onClick={onClose} className="icon-btn" type="button"><X size={18} /></button>
                 </div>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Carrier Name</label>
-                        <input type="text" value={formData.carrier} onChange={e => setFormData({ ...formData, carrier: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Insured Person</label>
-                        <input type="text" value={formData.insured} onChange={e => setFormData({ ...formData, insured: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Issue Date</label>
-                        <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
-                        <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Death Benefit ($)</label>
-                        <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Loan Interest Rate (%)</label>
-                        <input type="number" step="0.1" value={formData.loanInterestRate} onChange={e => setFormData({ ...formData, loanInterestRate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Base Annual Premium ($)</label>
-                        <input type="number" value={formData.baseAnnualPremium} onChange={e => setFormData({ ...formData, baseAnnualPremium: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Planned Annual PUA ($)</label>
-                        <input type="number" value={formData.plannedAnnualPUA} onChange={e => setFormData({ ...formData, plannedAnnualPUA: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                    <div style={{ display: 'flex', gap: '1.5rem' }}>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Carrier Name</label>
+                                <input type="text" value={formData.carrier} onChange={e => setFormData({ ...formData, carrier: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Insured Person</label>
+                                <input type="text" value={formData.insured} onChange={e => setFormData({ ...formData, insured: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Issue Date</label>
+                                <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
+                                <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Death Benefit ($)</label>
+                                <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Loan Interest Rate (%)</label>
+                                <input type="number" step="0.1" value={formData.loanInterestRate} onChange={e => setFormData({ ...formData, loanInterestRate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Base Annual Premium ($)</label>
+                                <input type="number" value={formData.baseAnnualPremium} onChange={e => setFormData({ ...formData, baseAnnualPremium: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Planned Annual PUA ($)</label>
+                                <input type="number" value={formData.plannedAnnualPUA} onChange={e => setFormData({ ...formData, plannedAnnualPUA: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" style={{ width: '100%', padding: '1rem', background: 'var(--accent-gold)', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', marginTop: '0.5rem' }}>Save Policy</button>
                 </form>
