@@ -160,20 +160,20 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
     };
 
     return (
-        <div className="glass-panel anim-fade-in" style={{ background: 'rgba(12, 14, 18, 0.8)', border: '1px solid var(--accent-gold-glow)' }}>
+        <div className="glass-panel anim-fade-in" style={{ background: 'var(--calculator-bg)', border: '1px solid var(--accent-gold-glow)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: '#fff' }}>
                     <RefreshCcw size={20} color="#d4af37" />
                     IBC Loan Simulator
                 </h3>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                 </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Loan Amount</label>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: '#fff', marginBottom: '0.5rem' }}>Loan Amount</label>
                         <div style={{ position: 'relative' }}>
                             <DollarSign size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-gold)' }} />
                             <input
@@ -203,7 +203,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Repayment Term (Years)</label>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: '#fff', marginBottom: '0.5rem' }}>Repayment Term (Years)</label>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                             {[3, 5, 10, 15].map(y => (
                                 <button
@@ -229,7 +229,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
 
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '1rem' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Simulated Policy Loan Rate</label>
+                            <label style={{ fontSize: '0.8rem', color: '#fff' }}>Simulated Policy Loan Rate</label>
                             <span style={{ fontSize: '0.85rem', color: 'var(--accent-gold)', fontWeight: 600 }}>{activeRate.toFixed(2)}%</span>
                         </div>
                         <input
@@ -241,7 +241,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
                             onChange={(e) => setActiveRate(parseFloat(e.target.value))}
                             style={{ width: '100%', accentColor: 'var(--accent-gold)' }}
                         />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.25rem' }}>
                             <span>4.0% (Low)</span>
                             <span>8.0% (High)</span>
                         </div>
@@ -250,17 +250,17 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
 
                 <div style={{ background: 'rgba(212, 175, 55, 0.03)', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(212, 175, 55, 0.1)' }}>
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <div className="stat-label" style={{ fontSize: '0.7rem' }}>Estimated Monthly Repayment</div>
+                        <div className="stat-label" style={{ fontSize: '0.7rem', color: '#fff' }}>Estimated Monthly Repayment</div>
                         <div className="stat-value gold" style={{ fontSize: '1.8rem' }}>${stats.monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Total Interest Cost</span>
+                            <span style={{ fontSize: '0.85rem', color: '#fff' }}>Total Interest Cost</span>
                             <span style={{ fontSize: '0.9rem', color: '#fff' }}>${stats.totalInterest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Capital Still Earning Dividends</span>
+                            <span style={{ fontSize: '0.85rem', color: '#fff' }}>Capital Still Earning Dividends</span>
                             <span style={{ fontSize: '0.9rem', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                 <TrendingUp size={14} /> ${stats.remainingCashWork.toLocaleString()}
                             </span>
@@ -270,7 +270,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
                     <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
                             <Shield size={16} color="var(--success)" style={{ marginTop: '2px' }} />
-                            <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: '1.4' }}>
+                            <p style={{ fontSize: '0.75rem', color: '#fff', lineHeight: '1.4' }}>
                                 This loan is collateralized by your policy. Your death benefit will be adjusted by the outstanding loan balance if not repaid.
                             </p>
                         </div>

@@ -22,7 +22,9 @@ import {
     Trash2,
     Printer,
     Settings,
-    List
+    List,
+    Sun,
+    Moon
 } from 'lucide-react';
 
 
@@ -94,7 +96,7 @@ const EditableStat = ({ label, value, onSave, prefix = "$", suffix = ".00", isGo
                             background: 'rgba(255,255,255,0.05)',
                             border: '1px solid var(--accent-gold-glow)',
                             borderRadius: '8px',
-                            color: '#fff',
+                            color: 'var(--text-main)',
                             padding: '0.25rem 0.5rem',
                             fontSize: '1.25rem',
                             width: '100%'
@@ -166,7 +168,7 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '650px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 style={{ margin: 0, color: '#fff' }}>Link New Policy</h3>
+                    <h3 style={{ margin: 0, color: 'var(--text-main)' }}>Link New Policy</h3>
                     <button onClick={onClose} className="icon-btn" type="button"><X size={18} /></button>
                 </div>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -174,37 +176,37 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Carrier Name</label>
-                                <input type="text" value={formData.carrier} onChange={e => setFormData({ ...formData, carrier: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="text" value={formData.carrier} onChange={e => setFormData({ ...formData, carrier: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Insured Person</label>
-                                <input type="text" value={formData.insured} onChange={e => setFormData({ ...formData, insured: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="text" value={formData.insured} onChange={e => setFormData({ ...formData, insured: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Issue Date</label>
-                                <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
-                                <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                         </div>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Death Benefit ($)</label>
-                                <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Loan Interest Rate (%)</label>
-                                <input type="number" step="0.1" value={formData.loanInterestRate} onChange={e => setFormData({ ...formData, loanInterestRate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="number" step="0.1" value={formData.loanInterestRate} onChange={e => setFormData({ ...formData, loanInterestRate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Base Annual Premium ($)</label>
-                                <input type="number" value={formData.baseAnnualPremium} onChange={e => setFormData({ ...formData, baseAnnualPremium: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="number" value={formData.baseAnnualPremium} onChange={e => setFormData({ ...formData, baseAnnualPremium: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Planned Annual PUA ($)</label>
-                                <input type="number" value={formData.plannedAnnualPUA} onChange={e => setFormData({ ...formData, plannedAnnualPUA: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="number" value={formData.plannedAnnualPUA} onChange={e => setFormData({ ...formData, plannedAnnualPUA: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                         </div>
                     </div>
@@ -253,18 +255,18 @@ const PolicyLedgerModal = ({ isOpen, onClose, policy, onAddTransaction }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 style={{ margin: 0, color: '#fff' }}>Trust Ledger: {policy.carrier}</h3>
+                    <h3 style={{ margin: 0, color: 'var(--text-main)' }}>Trust Ledger: {policy.carrier}</h3>
                     <button onClick={onClose} className="icon-btn" type="button"><X size={18} /></button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
                     <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Base Annual Premium</div>
-                        <div style={{ fontSize: '1.1rem', color: '#fff' }}>${(policy.baseAnnualPremium || 0).toLocaleString()}</div>
+                        <div style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>${(policy.baseAnnualPremium || 0).toLocaleString()}</div>
                     </div>
                     <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Planned Annual PUA</div>
-                        <div style={{ fontSize: '1.1rem', color: '#fff' }}>${(policy.plannedAnnualPUA || 0).toLocaleString()}</div>
+                        <div style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>${(policy.plannedAnnualPUA || 0).toLocaleString()}</div>
                     </div>
                 </div>
 
@@ -279,29 +281,29 @@ const PolicyLedgerModal = ({ isOpen, onClose, policy, onAddTransaction }) => {
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <div style={{ flex: 1 }}>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Date</label>
-                                <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             {txType === 'PREMIUM' ? (
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Amount ($)</label>
-                                    <input type="number" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                    <input type="number" value={formData.amount} onChange={e => setFormData({ ...formData, amount: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                                 </div>
                             ) : (
                                 <>
                                     <div style={{ flex: 1 }}>
                                         <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Statement CV ($)</label>
-                                        <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                        <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                                     </div>
                                     <div style={{ flex: 1 }}>
                                         <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Statement DB ($)</label>
-                                        <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} required />
+                                        <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                                     </div>
                                 </>
                             )}
                         </div>
                         <div>
                             <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Note/Description</label>
-                            <input type="text" value={formData.note} onChange={e => setFormData({ ...formData, note: e.target.value })} placeholder={txType === 'PREMIUM' ? "e.g., Annual Base + PUA" : "e.g., 2024 Annual Statement"} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', borderRadius: '8px' }} />
+                            <input type="text" value={formData.note} onChange={e => setFormData({ ...formData, note: e.target.value })} placeholder={txType === 'PREMIUM' ? "e.g., Annual Base + PUA" : "e.g., 2024 Annual Statement"} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} />
                         </div>
                         <button type="submit" style={{ width: '100%', padding: '0.75rem', background: 'transparent', color: 'var(--accent-gold)', border: '1px solid var(--accent-gold)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', marginTop: '0.5rem' }}>Log Record</button>
                     </form>
@@ -313,7 +315,7 @@ const PolicyLedgerModal = ({ isOpen, onClose, policy, onAddTransaction }) => {
                         {sortedTransactions.map(tx => (
                             <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', fontSize: '0.9rem' }}>
                                 <div>
-                                    <div style={{ color: '#fff', fontWeight: 600, marginBottom: '0.2rem' }}>{tx.note || tx.type.replace('_', ' ')}</div>
+                                    <div style={{ color: 'var(--text-main)', fontWeight: 600, marginBottom: '0.2rem' }}>{tx.note || tx.type.replace('_', ' ')}</div>
                                     <div style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>{tx.date}</div>
                                 </div>
                                 <div style={{ textAlign: 'right' }}>
@@ -432,7 +434,7 @@ const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy, o
                 {policies && policies.map((p, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                         <div>
-                            <div style={{ fontWeight: 600, color: '#fff', fontSize: '1.1rem' }}>{p.carrier} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 400 }}>({p.id})</span></div>
+                            <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1.1rem' }}>{p.carrier} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 400 }}>({p.id})</span></div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Insured: {p.insured} • Loan Rate: {p.loanInterestRate}%</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -489,7 +491,7 @@ const DeepDiveModal = ({ isOpen, onClose, module }) => {
                     <button onClick={onClose} className="icon-btn"><X size={18} /></button>
                 </div>
 
-                <h2 style={{ fontSize: '1.75rem', marginBottom: '1.5rem', color: '#fff' }}>{module.deepDive.title}</h2>
+                <h2 style={{ fontSize: '1.75rem', marginBottom: '1.5rem', color: 'var(--text-main)' }}>{module.deepDive.title}</h2>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     {module.deepDive.sections.map((section, idx) => (
@@ -504,7 +506,7 @@ const DeepDiveModal = ({ isOpen, onClose, module }) => {
 
                 {module.deepDive.resources && module.deepDive.resources.length > 0 && (
                     <div style={{ marginTop: '2.5rem', background: 'rgba(212, 175, 55, 0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.1)' }}>
-                        <h4 style={{ marginBottom: '1rem', color: '#fff', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <h4 style={{ marginBottom: '1rem', color: 'var(--text-main)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <ExternalLink size={18} color="var(--accent-gold)" /> Vetted Resources
                         </h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -570,7 +572,7 @@ const PrintSettingsModal = ({ isOpen, onClose, onGenerate }) => {
                                 border: '1px solid var(--glass-border)',
                                 borderRadius: '12px',
                                 padding: '0.75rem 1rem',
-                                color: '#fff'
+                                color: 'var(--text-main)'
                             }}
                         >
                             {STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -588,7 +590,7 @@ const PrintSettingsModal = ({ isOpen, onClose, onGenerate }) => {
                         </button>
                         <button
                             onClick={onClose}
-                            style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                            style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', cursor: 'pointer' }}
                         >
                             Cancel
                         </button>
@@ -707,7 +709,7 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                 border: '1px solid var(--glass-border)',
                                 borderRadius: '12px',
                                 padding: '0.75rem 1rem',
-                                color: '#fff'
+                                color: 'var(--text-main)'
                             }}
                         />
                     </div>
@@ -722,7 +724,7 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                 border: '1px solid var(--glass-border)',
                                 borderRadius: '12px',
                                 padding: '0.75rem 1rem',
-                                color: '#fff'
+                                color: 'var(--text-main)'
                             }}
                         >
                             <option value="Legal">Legal</option>
@@ -750,7 +752,7 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                         </button>
                         <button
                             onClick={onClose}
-                            style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                            style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', cursor: 'pointer' }}
                         >
                             Cancel
                         </button>
@@ -1169,7 +1171,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 </button>
                                 <button
                                     onClick={() => setIsRestoreModalOpen(false)}
-                                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                                    style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', cursor: 'pointer' }}
                                 >
                                     Cancel
                                 </button>
@@ -1204,7 +1206,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                         border: '1px solid var(--glass-border)',
                                         borderRadius: '12px',
                                         padding: '0.75rem 1rem',
-                                        color: '#fff',
+                                        color: 'var(--text-main)',
                                         marginBottom: '1.5rem'
                                     }}
                                 />
@@ -1218,7 +1220,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                     <button
                                         type="button"
                                         onClick={() => setIsLoadStateModalOpen(false)}
-                                        style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: '#fff', cursor: 'pointer' }}
+                                        style={{ flex: 1, padding: '0.75rem', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', cursor: 'pointer' }}
                                     >
                                         Cancel
                                     </button>
@@ -1245,7 +1247,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 However, most simple trusts rely solely on the Universal Templates provided. If your state requires local forms (like specific deeds or affidavits), please add them manually using the "Add Document" button.
                             </p>
                             <div style={{ padding: '1rem', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '12px', border: '1px solid rgba(14, 165, 233, 0.2)', marginBottom: '1.5rem' }}>
-                                <p style={{ fontSize: '0.85rem', color: '#fff', margin: 0 }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', margin: 0 }}>
                                     Need specific forms for {unsupportedStateName}? Contact support to request them: <br />
                                     <a href={`mailto:craig@logicwizards.one?subject=Trust Agent - Request Templates for ${unsupportedStateName}`} style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>craig@logicwizards.one</a>
                                 </p>
@@ -1275,7 +1277,7 @@ const FundingContent = ({ stats }) => {
 
     return (
         <div className="main-content anim-fade-in" style={{ width: '100%', gridColumn: 'span 2' }}>
-            <div className="glass-panel" style={{ background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(23, 27, 34, 0.7) 100%)', marginBottom: showCalculator ? '2rem' : '0' }}>
+            <div className="glass-panel" style={{ background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, var(--insight-bg-end) 100%)', marginBottom: showCalculator ? '2rem' : '0' }}>
                 <h2 className="card-title">
                     <Wallet size={24} color="#d4af37" />
                     Funding Mastery
@@ -1360,7 +1362,7 @@ const EnlightenmentContent = ({ modules }) => {
                 {modules.map((module) => (
                     <div key={module.id} className="glass-panel anim-fade-in">
                         <div className="badge badge-gold" style={{ marginBottom: '1rem' }}>{module.tag}</div>
-                        <h3 style={{ marginBottom: '1rem', color: '#fff' }}>{module.title}</h3>
+                        <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>{module.title}</h3>
                         <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', lineHeight: '1.7' }}>{module.content}</p>
                         <button
                             onClick={() => setSelectedModule(module)}
@@ -1383,6 +1385,15 @@ const EnlightenmentContent = ({ modules }) => {
 
 
 function App() {
+    const [theme, setTheme] = useState(localStorage.getItem('trust_theme') || 'dark');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('trust_theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
     const [activeTab, setActiveTab] = useState('overview');
     const [trust, setTrust] = useState(trustData);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -1599,12 +1610,12 @@ function App() {
                             onOpenLedger={setLedgerPolicy}
                         />
                         <div className="sidebar anim-fade-in" style={{ animationDelay: '0.4s' }}>
-                            <div className="glass-panel" style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(23, 27, 34, 0.7) 100%)' }}>
+                            <div className="glass-panel" style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, var(--insight-bg-end) 100%)' }}>
                                 <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <Info size={18} color="#d4af37" />
                                     Wizard Insight
                                 </h3>
-                                <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
                                     "Your current aggregated cash value allows for a collateralized loan of up to <strong>${aggregateStats.maxLoanAmount.toLocaleString()}</strong> at your max {aggregateStats.loanInterestRate}% interest rate, while your full ${Math.floor(aggregateStats.totalCashValue / 1000)}k continues to earn dividends."
                                 </p>
                                 <button
@@ -1675,6 +1686,21 @@ function App() {
                         <span>For Educational and Administrative Purposes Only</span>
                         <span className="divider">•</span>
                         <span>Not Legal or Financial Advice</span>
+                        <span className="divider">•</span>
+                        <button
+                            onClick={toggleTheme}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                background: 'transparent', border: '1px solid var(--glass-border)',
+                                padding: '0.35rem 0.75rem', borderRadius: '16px', color: 'var(--text-main)',
+                                cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.8rem',
+                                outline: 'none'
+                            }}
+                            className="theme-toggle-btn"
+                        >
+                            {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
+                            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                        </button>
                     </div>
                 </div>
             </footer>

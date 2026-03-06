@@ -122,7 +122,7 @@ const ComplianceTracker = () => {
                             borderRadius: '12px',
                             padding: '1rem',
                         }}>
-                            <label style={{ display: 'block', fontSize: '0.9rem', color: '#fff', marginBottom: '0.5rem', fontWeight: 600 }}>{task.title}</label>
+                            <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-main)', marginBottom: '0.5rem', fontWeight: 600 }}>{task.title}</label>
                             <input
                                 type="date"
                                 className="premium-input"
@@ -144,7 +144,7 @@ const ComplianceTracker = () => {
                                     border: '1px solid var(--glass-border)',
                                     padding: '0.5rem',
                                     borderRadius: '6px',
-                                    color: '#fff',
+                                    color: 'var(--text-main)',
                                     colorScheme: 'dark'
                                 }}
                             />
@@ -173,7 +173,7 @@ const ComplianceTracker = () => {
 
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <div style={{ flex: 1, paddingRight: '1rem' }}>
-                                            <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem', color: '#fff' }}>{task.title}</h4>
+                                            <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem', color: 'var(--text-main)' }}>{task.title}</h4>
                                             <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-dim)', lineHeight: '1.4' }}>{task.desc}</p>
 
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', fontSize: '0.8rem', color: statusInfo.color, fontWeight: 600 }}>
@@ -189,7 +189,7 @@ const ComplianceTracker = () => {
                                                 background: 'rgba(255,255,255,0.05)',
                                                 border: '1px solid var(--glass-border)',
                                                 borderRadius: '8px',
-                                                color: '#fff',
+                                                color: 'var(--text-main)',
                                                 padding: '0.5rem',
                                                 cursor: 'pointer',
                                                 display: 'flex',

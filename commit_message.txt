@@ -1,8 +1,7 @@
-feat: implement advanced trust management features and UI refinements
+feat: implement light/dark mode theme toggle and refined styling
 
-- **Document Creation Wizard**: Added a 3-step modal wizard (`DocumentWizard.jsx`) to guide users through generating a Certification of Trust, printing it, and securely scanning the signed physical document back into the Vault via device camera.
-- **Persistent Image Storage**: Transitioned Vault image uploads from temporary blob URLs to persistent Base64 string storage via `FileReader` natively within `IndexedDB`.
-- **Vault Backup & Restore**: Created export/import functionality to zip and backup the `config.json` state alongside physical image file extractions, allowing full Vault restorations from `.zip` archives.
-- **Emergency Successor Export**: Added a standalone HTML package generator (`successorExport.js`) that bundles Trust data, policies, and embedded document images for offline, emergency access by successor trustees.
-- **Annual Compliance Tracker**: Integrated a new dashboard widget (`ComplianceTracker.jsx`) to track and alert users of mandatory Trust upkeep (Crummey notices, entity fees, trustee meetings), complete with a responsive settings pane for manual date overrides.
-- **Responsive UI Overhaul**: Refactored the Document Vault action toolbar with standardized, responsive `.action-btn` CSS classes, collapsing advanced tools into a sleek, mobile-friendly dropdown menu on smaller screens to eliminate overflow and clutter.
+- Added a functional light/dark mode toggle button to the app footer
+- Created light mode CSS variables for a premium, readable light theme
+- Updated main components (App, BorrowingCalculator, ComplianceTracker) to dynamically respond to light/dark themes
+- Handled hardcoded color edge cases to ensure optimal visibility in both modes
+- Preserved the existing dark mode aesthetic and established a new, highly visible light mode variant

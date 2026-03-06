@@ -3,6 +3,8 @@
 :root {
     --bg-color: #0c0e12;
     --panel-bg: rgba(23, 27, 34, 0.7);
+    --calculator-bg: rgba(12, 14, 18, 0.8);
+    --insight-bg-end: rgba(23, 27, 34, 0.7);
     --accent-gold: #d4af37;
     --accent-gold-glow: rgba(212, 175, 55, 0.3);
     --text-main: #e2e8f0;
@@ -11,6 +13,21 @@
     --glass-border: rgba(255, 255, 255, 0.05);
     --success: #10b981;
     --warning: #f59e0b;
+}
+
+[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --panel-bg: rgba(255, 255, 255, 0.8);
+    --calculator-bg: rgba(12, 14, 18, 0.6);
+    --insight-bg-end: rgba(255, 255, 255, 1);
+    --accent-gold: #c29d2f;
+    --accent-gold-glow: rgba(194, 157, 47, 0.25);
+    --text-main: #0c0e12;
+    --text-dim: #475569;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --success: #059669;
+    --warning: #d97706;
 }
 
 * {
@@ -236,8 +253,8 @@ h3,
 }
 
 .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: rgba(128, 128, 128, 0.1);
+    color: var(--text-main);
 }
 
 .icon-btn.success:hover {
@@ -253,10 +270,10 @@ h3,
 }
 
 .action-btn {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(128, 128, 128, 0.05);
     border: 1px solid var(--glass-border);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-main);
     padding: 0.35rem 0.6rem;
     font-weight: 500;
     display: flex;
