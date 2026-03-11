@@ -49,7 +49,8 @@ import ComplianceTracker from './components/ComplianceTracker';
 import DocumentWizard from './components/DocumentWizard';
 import { loadTrustData, saveTrustData } from './utils/storage';
 import { exportVaultToZip, importVaultFromZip } from './utils/backup';
-import { generateSuccessorPackage } from './utils/successorExport';
+import { generateHashKey } from './utils/hashKey';
+import { SuccessorInput, SuccessorDashboard } from './components/SuccessorView';
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -135,7 +136,7 @@ const EditableStat = ({ label, value, onSave, prefix = "$", suffix = ".00", isGo
         </div>
     );
 };
-const PolicyModal = ({ isOpen, onClose, onSave }) => {
+const PolicyModal = ({ isOpen, onClose, onSave, initialData }) => {
     const [formData, setFormData] = useState({
         carrier: '',
         insured: '',
@@ -144,14 +145,38 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
         deathBenefit: '',
         loanInterestRate: '',
         baseAnnualPremium: '',
-        plannedAnnualPUA: ''
+        plannedAnnualPUA: '',
+        policyNumber: '',
+        claimsPhone: '',
+        customerCarePhone: ''
     });
+
+    React.useEffect(() => {
+        if (initialData && isOpen) {
+            setFormData({
+                carrier: initialData.carrier || '',
+                insured: initialData.insured || '',
+                issueDate: initialData.issueDate || new Date().toISOString().split('T')[0],
+                cashValue: initialData.cashValue || '',
+                deathBenefit: initialData.deathBenefit || '',
+                loanInterestRate: initialData.loanInterestRate || '',
+                baseAnnualPremium: initialData.baseAnnualPremium || '',
+                plannedAnnualPUA: initialData.plannedAnnualPUA || '',
+                policyNumber: initialData.policyNumber || '',
+                claimsPhone: initialData.claimsPhone || '',
+                customerCarePhone: initialData.customerCarePhone || ''
+            });
+        } else if (isOpen) {
+            setFormData({ carrier: '', insured: '', issueDate: new Date().toISOString().split('T')[0], cashValue: '', deathBenefit: '', loanInterestRate: '', baseAnnualPremium: '', plannedAnnualPUA: '', policyNumber: '', claimsPhone: '', customerCarePhone: '' });
+        }
+    }, [initialData, isOpen]);
 
     if (!isOpen) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave({
+            ...(initialData ? { id: initialData.id } : {}),
             carrier: formData.carrier || 'Unknown Carrier',
             insured: formData.insured || 'Unknown Insured',
             issueDate: formData.issueDate || new Date().toISOString().split('T')[0],
@@ -160,15 +185,17 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
             loanInterestRate: Number(formData.loanInterestRate) || 0,
             baseAnnualPremium: Number(formData.baseAnnualPremium) || 0,
             plannedAnnualPUA: Number(formData.plannedAnnualPUA) || 0,
+            policyNumber: formData.policyNumber || '',
+            claimsPhone: formData.claimsPhone || '',
+            customerCarePhone: formData.customerCarePhone || ''
         });
-        setFormData({ carrier: '', insured: '', issueDate: new Date().toISOString().split('T')[0], cashValue: '', deathBenefit: '', loanInterestRate: '', baseAnnualPremium: '', plannedAnnualPUA: '' });
     };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '650px' }}>
+            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '750px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 style={{ margin: 0, color: 'var(--text-main)' }}>Link New Policy</h3>
+                    <h3 style={{ margin: 0, color: 'var(--text-main)' }}>{initialData ? 'Edit Policy Data' : 'Link New Policy'}</h3>
                     <button onClick={onClose} className="icon-btn" type="button"><X size={18} /></button>
                 </div>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -187,11 +214,23 @@ const PolicyModal = ({ isOpen, onClose, onSave }) => {
                                 <input type="date" value={formData.issueDate} onChange={e => setFormData({ ...formData, issueDate: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
                             </div>
                             <div>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
-                                <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Policy Number</label>
+                                <input type="text" value={formData.policyNumber} onChange={e => setFormData({ ...formData, policyNumber: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Claims Phone Number</label>
+                                <input type="text" value={formData.claimsPhone} onChange={e => setFormData({ ...formData, claimsPhone: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Customer Care Phone Number</label>
+                                <input type="text" value={formData.customerCarePhone} onChange={e => setFormData({ ...formData, customerCarePhone: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} />
                             </div>
                         </div>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Cash Value ($)</label>
+                                <input type="number" value={formData.cashValue} onChange={e => setFormData({ ...formData, cashValue: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
+                            </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Death Benefit ($)</label>
                                 <input type="number" value={formData.deathBenefit} onChange={e => setFormData({ ...formData, deathBenefit: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }} required />
@@ -338,140 +377,249 @@ const PolicyLedgerModal = ({ isOpen, onClose, policy, onAddTransaction }) => {
     );
 };
 
-const OverviewContent = ({ data, stats, policies, onAddPolicy, onDeletePolicy, onOpenLedger }) => (
-    <div className="main-content anim-fade-in">
+const SuccessorExportModal = ({ isOpen, onClose, hashKey }) => {
+    if (!isOpen) return null;
 
-        <div className="glass-panel" style={{ marginBottom: '2rem' }}>
-            <h2 className="card-title">
-                <TrendingUp size={24} color="#d4af37" />
-                Policy Value Projection
-            </h2>
-            <div style={{ width: '100%', height: 350 }}>
-                <ResponsiveContainer>
-                    <AreaChart data={data}>
-                        <defs>
-                            <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorPremium" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
-                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                        <XAxis
-                            dataKey="name"
-                            stroke="#4a5568"
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            dy={10}
-                        />
-                        <YAxis
-                            stroke="#4a5568"
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) => `$${value / 1000}k`}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Area
-                            type="monotone"
-                            dataKey="cash"
-                            stroke="#d4af37"
-                            strokeWidth={3}
-                            fillOpacity={1}
-                            fill="url(#colorCash)"
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="death"
-                            stroke="rgba(226, 232, 240, 0.2)"
-                            strokeWidth={1}
-                            fill="transparent"
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="premium"
-                            stroke="#ef4444"
-                            strokeDasharray="4 4"
-                            strokeWidth={2}
-                            fillOpacity={1}
-                            fill="url(#colorPremium)"
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
+    const handleCopy = () => {
+        navigator.clipboard.writeText(hashKey);
+        // Note: alert might be annoying if clicked multiple times, but it is simple feedback
+    };
 
-        <div className="stats-grid">
-            <div className="stat-card" data-tooltip="The aggregate equity accumulated across all your trust's life insurance policies. This grows tax-deferred and forms the basis for your borrowing capacity.">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', fontWeight: 600 }}>Total Cash Value</div>
-                <div className="stat-value gold" style={{ fontSize: '2rem' }}>${stats.totalCashValue.toLocaleString()}</div>
-            </div>
-            <div className="stat-card" data-tooltip="The total combined payout the trust receives upon your passing. This provides the ultimate legacy and protection for your beneficiaries.">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', fontWeight: 600 }}>Total Death Benefit</div>
-                <div className="stat-value" style={{ fontSize: '2rem' }}>${stats.deathBenefit.toLocaleString()}</div>
-            </div>
-        </div>
+    const handleEmail = () => {
+        const subject = encodeURIComponent("Your Trust Successor Hash Key");
+        const body = encodeURIComponent(`You have been appointed as a Successor Trustee.\n\nPlease visit the Trust Manager portal, click "Connect as Successor" on the dashboard, and paste the following secure hash key to access your authorization package and trust details:\n\n${hashKey}\n\nKeep this key safe.`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    };
 
-        <div className="glass-panel" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 className="card-title" style={{ margin: 0 }}>
-                    <ShieldCheck size={20} color="#d4af37" />
-                    Tracked Policies
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="glass-panel modal-content anim-fade-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px', textAlign: 'center' }}>
+                <h3 className="card-title" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <ShieldCheck size={28} color="#d4af37" />
+                    Successor Hash Key Generated
                 </h3>
-                <button
-                    onClick={onAddPolicy}
-                    className="icon-btn"
-                    style={{ background: 'var(--accent-gold)', color: '#000', padding: '0.4rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, display: 'flex', gap: '0.5rem', alignItems: 'center', border: 'none', cursor: 'pointer' }}
-                >
-                    <Plus size={16} /> Link Policy
+                <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
+                    This key contains an encrypted snapshot of the current trust state. Provide it to your appointed successor.
+                </p>
+                <textarea
+                    readOnly
+                    value={hashKey}
+                    style={{
+                        width: '100%',
+                        height: '100px',
+                        background: 'rgba(0,0,0,0.2)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '8px',
+                        color: 'var(--text-main)',
+                        padding: '1rem',
+                        fontFamily: 'monospace',
+                        marginBottom: '1.5rem',
+                        resize: 'none'
+                    }}
+                />
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button onClick={handleCopy} style={{ flex: 1, padding: '0.75rem', background: 'var(--accent-gold)', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                        Copy to Clipboard
+                    </button>
+                    <button onClick={handleEmail} style={{ flex: 1, padding: '0.75rem', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--glass-border)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                        Email Successor
+                    </button>
+                </div>
+                <button onClick={onClose} style={{ marginTop: '1rem', background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}>Close</button>
+            </div>
+        </div>
+    );
+};
+
+const OverviewContent = ({ data, stats, policies, onAddPolicy, onEditPolicy, onDeletePolicy, onOpenLedger, onTakeOver }) => {
+    const [isSuccessorView, setIsSuccessorView] = useState(false);
+    const [successorData, setSuccessorData] = useState(null);
+
+    if (isSuccessorView) {
+        if (!successorData) {
+            return (
+                <div className="main-content anim-fade-in" style={{ gridColumn: 'span 2' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '1rem' }}>
+                        <button onClick={() => setIsSuccessorView(false)} className="action-btn">
+                            &larr; Back to Dashboard
+                        </button>
+                    </div>
+                    <SuccessorInput onHashLoaded={setSuccessorData} />
+                </div>
+            );
+        } else {
+            return (
+                <div className="main-content anim-fade-in" style={{ gridColumn: 'span 2' }}>
+                    <SuccessorDashboard
+                        data={successorData}
+                        onTakeOver={(d) => {
+                            onTakeOver(d);
+                            setIsSuccessorView(false);
+                            setSuccessorData(null);
+                        }}
+                        onCancel={() => {
+                            setSuccessorData(null);
+                            setIsSuccessorView(false);
+                        }}
+                    />
+                </div>
+            );
+        }
+    }
+
+    return (
+        <div className="main-content anim-fade-in">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                <button onClick={() => setIsSuccessorView(true)} className="action-btn info">
+                    <ShieldCheck size={14} /> Connect as Successor
                 </button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {policies && policies.map((p, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-                        <div>
-                            <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1.1rem' }}>{p.carrier} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 400 }}>({p.id})</span></div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Insured: {p.insured} • Loan Rate: {p.loanInterestRate}%</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ color: 'var(--accent-gold)', fontWeight: 600 }}>CV: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.cashValue || p.cashValue || 0).toLocaleString()}</div>
-                                <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>DB: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.deathBenefit || p.deathBenefit || 0).toLocaleString()}</div>
-                            </div>
-                            <div style={{ display: 'flex' }}>
-                                <button
-                                    onClick={() => onOpenLedger(p)}
-                                    className="icon-btn"
-                                    style={{ color: 'var(--accent-gold)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
-                                    title="View Ledger / Update Values"
-                                >
-                                    <List size={18} />
-                                </button>
-                                <button
-                                    onClick={() => onDeletePolicy(p.id)}
-                                    className="icon-btn"
-                                    style={{ color: '#ef4444', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
-                                    title="Delete Policy"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-                {(!policies || policies.length === 0) && (
-                    <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>No policies linked to this trust yet.</div>
-                )}
-            </div>
-        </div>
 
-        <DividendChart />
-    </div>
-);
+            <div className="glass-panel" style={{ marginBottom: '2rem' }}>
+                <h2 className="card-title">
+                    <TrendingUp size={24} color="#d4af37" />
+                    Policy Value Projection
+                </h2>
+                <div style={{ width: '100%', height: 350 }}>
+                    <ResponsiveContainer>
+                        <AreaChart data={data}>
+                            <defs>
+                                <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
+                                </linearGradient>
+                                <linearGradient id="colorPremium" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
+                                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                            <XAxis
+                                dataKey="name"
+                                stroke="#4a5568"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                dy={10}
+                            />
+                            <YAxis
+                                stroke="#4a5568"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) => `$${value / 1000}k`}
+                            />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Area
+                                type="monotone"
+                                dataKey="cash"
+                                stroke="#d4af37"
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorCash)"
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="death"
+                                stroke="rgba(226, 232, 240, 0.2)"
+                                strokeWidth={1}
+                                fill="transparent"
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="premium"
+                                stroke="#ef4444"
+                                strokeDasharray="4 4"
+                                strokeWidth={2}
+                                fillOpacity={1}
+                                fill="url(#colorPremium)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
+            <div className="stats-grid">
+                <div className="stat-card" data-tooltip="The aggregate equity accumulated across all your trust's life insurance policies. This grows tax-deferred and forms the basis for your borrowing capacity.">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', fontWeight: 600 }}>Total Cash Value</div>
+                    <div className="stat-value gold" style={{ fontSize: '2rem' }}>${stats.totalCashValue.toLocaleString()}</div>
+                </div>
+                <div className="stat-card" data-tooltip="The total combined payout the trust receives upon your passing. This provides the ultimate legacy and protection for your beneficiaries.">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-dim)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', fontWeight: 600 }}>Total Death Benefit</div>
+                    <div className="stat-value" style={{ fontSize: '2rem' }}>${stats.deathBenefit.toLocaleString()}</div>
+                </div>
+            </div>
+
+            <div className="glass-panel" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h3 className="card-title" style={{ margin: 0 }}>
+                        <ShieldCheck size={20} color="#d4af37" />
+                        Tracked Policies
+                    </h3>
+                    <button
+                        onClick={onAddPolicy}
+                        className="icon-btn"
+                        style={{ background: 'var(--accent-gold)', color: '#000', padding: '0.4rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, display: 'flex', gap: '0.5rem', alignItems: 'center', border: 'none', cursor: 'pointer' }}
+                    >
+                        <Plus size={16} /> Link Policy
+                    </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {policies && policies.map((p, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                            <div>
+                                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1.1rem' }}>{p.carrier} <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: 400 }}>({p.id})</span></div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)', marginBottom: '0.4rem' }}>Insured: {p.insured} • Loan Rate: {p.loanInterestRate}%</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                    <span><strong>Policy #:</strong> {p.policyNumber || 'N/A'}</span>
+                                    <span><strong>Claims:</strong> {p.claimsPhone || 'N/A'}</span>
+                                    <span><strong>Care:</strong> {p.customerCarePhone || 'N/A'}</span>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ color: 'var(--accent-gold)', fontWeight: 600 }}>CV: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.cashValue || p.cashValue || 0).toLocaleString()}</div>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>DB: ${(p.transactions?.find(t => t.type === 'TRUE_UP')?.deathBenefit || p.deathBenefit || 0).toLocaleString()}</div>
+                                </div>
+                                <div style={{ display: 'flex' }}>
+                                    <button
+                                        onClick={() => onOpenLedger(p)}
+                                        className="icon-btn"
+                                        style={{ color: 'var(--accent-gold)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
+                                        title="View Ledger / Update Values"
+                                    >
+                                        <List size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => onEditPolicy(p)}
+                                        className="icon-btn"
+                                        style={{ color: '#38bdf8', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
+                                        title="Edit Policy Details"
+                                    >
+                                        <Edit3 size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => onDeletePolicy(p.id)}
+                                        className="icon-btn"
+                                        style={{ color: '#ef4444', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.5rem' }}
+                                        title="Delete Policy"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {(!policies || policies.length === 0) && (
+                        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>No policies linked to this trust yet.</div>
+                    )}
+                </div>
+            </div>
+
+            <DividendChart />
+        </div>
+    );
+};
 
 
 // --- Document Management Components ---
@@ -764,7 +912,7 @@ const DocumentModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 };
 
 
-const DocumentsContent = ({ documents, onUpdateDocuments }) => {
+const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey }) => {
     const [filter, setFilter] = useState('All');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
@@ -778,6 +926,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
     const [unsupportedStateName, setUnsupportedStateName] = useState('');
     const [stateInput, setStateInput] = useState('');
     const [isWizardOpen, setIsWizardOpen] = useState(false);
+    const [wizardDoc, setWizardDoc] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const backupInputRef = React.useRef(null);
@@ -1041,8 +1190,8 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 <button onClick={() => setIsPrintModalOpen(true)} className="action-btn">
                                     <Printer size={14} /> Print Portfolio
                                 </button>
-                                <button onClick={generateSuccessorPackage} className="action-btn danger">
-                                    <Download size={14} /> Successor Export
+                                <button onClick={onGenerateSuccessorKey} className="action-btn danger">
+                                    <Download size={14} /> Successor Hash Key
                                 </button>
                             </div>
 
@@ -1068,8 +1217,8 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                         <button onClick={() => { setIsPrintModalOpen(true); setIsDropdownOpen(false); }} className="action-btn">
                                             <Printer size={14} /> Print Portfolio
                                         </button>
-                                        <button onClick={() => { generateSuccessorPackage(); setIsDropdownOpen(false); }} className="action-btn danger">
-                                            <Download size={14} /> Successor Export
+                                        <button onClick={() => { onGenerateSuccessorKey(); setIsDropdownOpen(false); }} className="action-btn danger">
+                                            <Download size={14} /> Successor Hash Key
                                         </button>
                                     </div>
                                 )}
@@ -1082,7 +1231,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                 onChange={handleImportBackup}
                                 style={{ display: 'none' }}
                             />
-                            <button onClick={() => setIsWizardOpen(true)} className="action-btn gold">
+                            <button onClick={() => { setWizardDoc(null); setIsWizardOpen(true); }} className="action-btn gold">
                                 <ShieldCheck size={14} /> Create via Wizard
                             </button>
                             <button onClick={handleAdd} className="action-btn solid-gold">
@@ -1103,6 +1252,16 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
                                     <div className="badge badge-gold" style={{ fontSize: '0.65rem' }}>{doc.category}</div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    {doc.isTemplate && (
+                                        <button
+                                            onClick={() => { setWizardDoc({ ...doc, index: i }); setIsWizardOpen(true); }}
+                                            className="icon-btn"
+                                            style={{ padding: '0.4rem', color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
+                                            title="Generate Document"
+                                        >
+                                            <ShieldCheck size={14} />
+                                        </button>
+                                    )}
                                     <button onClick={() => handleEdit(doc, i)} className="icon-btn" style={{ padding: '0.4rem' }}><Edit3 size={14} /></button>
                                     <button onClick={() => handleDelete(i)} className="icon-btn danger" style={{ padding: '0.4rem' }}><Trash2 size={14} /></button>
                                 </div>
@@ -1140,6 +1299,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments }) => {
 
             <DocumentWizard
                 isOpen={isWizardOpen}
+                initialDoc={wizardDoc}
                 onClose={() => setIsWizardOpen(false)}
                 onSave={handleSave}
             />
@@ -1398,6 +1558,7 @@ function App() {
     const [trust, setTrust] = useState(trustData);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
+    const [editingPolicyData, setEditingPolicyData] = useState(null);
     const [ledgerPolicy, setLedgerPolicy] = useState(null); // The policy currently viewed in the ledger modal
     const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
 
@@ -1411,6 +1572,20 @@ function App() {
         };
         initDB();
     }, []);
+
+    const [isSuccessorModalOpen, setIsSuccessorModalOpen] = useState(false);
+    const [currentHashKey, setCurrentHashKey] = useState('');
+
+    const handleGenerateHashKey = async () => {
+        try {
+            const key = await generateHashKey(trust);
+            setCurrentHashKey(key);
+            setIsSuccessorModalOpen(true);
+        } catch (e) {
+            alert("Failed to generate Hash Key");
+        }
+    };
+
 
     React.useEffect(() => {
         if (isDataLoaded) {
@@ -1516,36 +1691,39 @@ function App() {
     }, [trust.policies, generateDynamicProjection]);
 
     const handleSavePolicy = (policyData) => {
-        const generatedId = `pol_${Math.floor(Math.random() * 10000)}`;
-
-        const newPolicy = {
-            id: generatedId,
-            carrier: policyData.carrier,
-            insured: policyData.insured,
-            issueDate: policyData.issueDate,
-            baseAnnualPremium: policyData.baseAnnualPremium,
-            plannedAnnualPUA: policyData.plannedAnnualPUA,
-            loanInterestRate: policyData.loanInterestRate,
-            // Initial legacy fields for fallback, though transactions serve as source of truth now
-            cashValue: policyData.cashValue,
-            deathBenefit: policyData.deathBenefit,
-            transactions: [
-                {
-                    id: `tx_${Date.now()}`,
-                    type: 'TRUE_UP',
-                    date: policyData.issueDate,
-                    cashValue: policyData.cashValue,
-                    deathBenefit: policyData.deathBenefit,
-                    note: 'Initial Policy Link'
-                }
-            ]
-        };
-
-        setTrust(prev => ({
-            ...prev,
-            policies: [...(prev.policies || []), newPolicy]
-        }));
+        setTrust(prev => {
+            const existingPolicies = prev.policies || [];
+            if (policyData.id) {
+                // Editing existing
+                return {
+                    ...prev,
+                    policies: existingPolicies.map(p => p.id === policyData.id ? { ...p, ...policyData } : p)
+                };
+            } else {
+                // Adding new
+                const generatedId = `pol_${Math.floor(Math.random() * 10000)}`;
+                const newPolicy = {
+                    ...policyData,
+                    id: generatedId,
+                    transactions: [
+                        {
+                            id: `tx_${Date.now()}`,
+                            type: 'TRUE_UP',
+                            date: policyData.issueDate,
+                            cashValue: policyData.cashValue,
+                            deathBenefit: policyData.deathBenefit,
+                            note: 'Initial Policy Link'
+                        }
+                    ]
+                };
+                return {
+                    ...prev,
+                    policies: [...existingPolicies, newPolicy]
+                };
+            }
+        });
         setIsPolicyModalOpen(false);
+        setEditingPolicyData(null);
     };
 
     const handleDeletePolicy = (id) => {
@@ -1598,16 +1776,27 @@ function App() {
                 </div>
             </nav>
 
-            <main className="dashboard-grid">
+            <SuccessorExportModal
+                isOpen={isSuccessorModalOpen}
+                onClose={() => setIsSuccessorModalOpen(false)}
+                hashKey={currentHashKey}
+            />
+
+            <div className="dashboard-grid">
                 {activeTab === 'overview' && (
                     <>
                         <OverviewContent
                             data={aggregateProjection}
                             stats={aggregateStats}
                             policies={trust.policies}
-                            onAddPolicy={() => setIsPolicyModalOpen(true)}
+                            onAddPolicy={() => { setEditingPolicyData(null); setIsPolicyModalOpen(true); }}
+                            onEditPolicy={(p) => { setEditingPolicyData(p); setIsPolicyModalOpen(true); }}
                             onDeletePolicy={handleDeletePolicy}
-                            onOpenLedger={setLedgerPolicy}
+                            onOpenLedger={(policy) => setLedgerPolicy(policy)}
+                            onTakeOver={(data) => {
+                                setTrust(data);
+                                alert("Trust Manager state successfully updated from Hash Key.");
+                            }}
                         />
                         <div className="sidebar anim-fade-in" style={{ animationDelay: '0.4s' }}>
                             <div className="glass-panel" style={{ marginBottom: '1.5rem', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, var(--insight-bg-end) 100%)' }}>
@@ -1667,12 +1856,13 @@ function App() {
                     <DocumentsContent
                         documents={trust.documents}
                         onUpdateDocuments={(docs) => setTrust(prev => ({ ...prev, documents: docs }))}
+                        onGenerateSuccessorKey={handleGenerateHashKey}
                     />
                 )}
                 {activeTab === 'enlightenment' && <EnlightenmentContent modules={educationalModules} />}
                 {activeTab === 'funding' && <FundingContent stats={aggregateStats} />}
 
-            </main>
+            </div>
 
             <footer className="app-footer anim-fade-in" style={{ animationDelay: '0.8s' }}>
                 <div className="footer-content">
@@ -1707,8 +1897,9 @@ function App() {
 
             <PolicyModal
                 isOpen={isPolicyModalOpen}
-                onClose={() => setIsPolicyModalOpen(false)}
+                onClose={() => { setIsPolicyModalOpen(false); setEditingPolicyData(null); }}
                 onSave={handleSavePolicy}
+                initialData={editingPolicyData}
             />
 
             <PolicyLedgerModal
