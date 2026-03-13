@@ -48,7 +48,7 @@ import CrummeyNoticeGenerator from './components/CrummeyNoticeGenerator';
 import ComplianceTracker from './components/ComplianceTracker';
 import DocumentWizard from './components/DocumentWizard';
 import { loadTrustData, saveTrustData } from './utils/storage';
-import { exportVaultToZip, importVaultFromZip } from './utils/backup';
+import { exportVaultToZip, importVaultFromZip, importVaultFromNative } from './utils/backup';
 import { generateHashKey } from './utils/hashKey';
 import { SuccessorInput, SuccessorDashboard } from './components/SuccessorView';
 
@@ -928,6 +928,8 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
     const [isWizardOpen, setIsWizardOpen] = useState(false);
     const [wizardDoc, setWizardDoc] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [printData, setPrintData] = useState(null);
+    const [viewingDoc, setViewingDoc] = useState(null);
 
     const backupInputRef = React.useRef(null);
 
@@ -945,6 +947,18 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
             }
         }
         e.target.value = ''; // Reset input so same file can be imported again if needed
+    };
+
+    const triggerRestore = async () => {
+        if (window.__TAURI_INTERNALS__) {
+            const data = await importVaultFromNative();
+            if (data && data.documents) {
+                onUpdateDocuments(data.documents);
+                alert("Vault successfully restored from Native backup.");
+            }
+        } else {
+            backupInputRef.current.click();
+        }
     };
 
 
@@ -1031,16 +1045,47 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
 
     const handleView = (doc) => {
         if (doc.fileUrl) {
-            window.open(doc.fileUrl, '_blank');
+            setViewingDoc(doc);
         } else {
             alert('This is a mock document. Please upload a real file to use the view feature.');
         }
     };
 
+    const renderDocumentViewer = () => {
+        if (!viewingDoc) return null;
+        const isImage = viewingDoc.fileType?.startsWith('image/') || viewingDoc.fileName?.match(/\.(jpg|jpeg|png)$/i);
+        
+        return (
+            <div className="print-portfolio-container document-viewer-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', zIndex: 99999, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '1rem', background: '#1c1c1c', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100000 }}>
+                    <h3 style={{ color: '#fff', margin: 0, fontSize: '1.2rem' }}>{viewingDoc.name}</h3>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <a href={viewingDoc.fileUrl} download={viewingDoc.fileName} style={{ padding: '8px 16px', background: '#d4af37', color: '#000', textDecoration: 'none', borderRadius: '4px', fontWeight: 'bold' }}>Download</a>
+                        <button onClick={() => setViewingDoc(null)} style={{ padding: '8px 16px', background: 'transparent', border: '1px solid #fff', color: '#fff', borderRadius: '4px', cursor: 'pointer' }}>Close</button>
+                    </div>
+                </div>
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '2rem' }}>
+                    {isImage ? (
+                        <img src={viewingDoc.fileUrl} alt={viewingDoc.name} style={{ maxWidth: '100%', maxHeight: '85vh', objectFit: 'contain', background: '#fff' }} />
+                    ) : (
+                        <iframe src={viewingDoc.fileUrl} title={viewingDoc.name} style={{ width: '100%', height: '85vh', background: '#fff', border: 'none' }} />
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     const handlePrintPortfolio = (selectedState) => {
-        const printWindow = window.open('', '_blank');
+        setIsPrintModalOpen(false);
+        setPrintData({ selectedState });
+    };
+
+    const renderPrintPortfolio = () => {
+        if (!printData) return null;
+        const { selectedState } = printData;
+
         const tocHtml = documents.map((doc, index) => `
-            <div class="print-toc-item">
+            <div class="print-toc-item" style="display: flex; justify-content: space-between; border-bottom: 1px dotted #888; padding: 0.5rem 0;">
                 <span>${index + 1}. ${doc.name} (${doc.category})</span>
                 <span>${doc.date}</span>
             </div>
@@ -1056,7 +1101,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                     contentHtml = `<img src="${doc.fileUrl}" style="max-width:100%; max-height: 90vh; display:block; margin: 0 auto;"/>`;
                 } else if (isPdf) {
                     contentHtml = `
-                        <div style="padding: 4rem; border: 1px dashed #888; text-align: center; background: #fafafa;">
+                        <div style="padding: 4rem; border: 1px dashed #888; text-align: center; background: #fafafa; color: #000;">
                             <h3 style="margin-bottom: 1rem;">PDF Document Record</h3>
                             <p style="margin-bottom: 2rem;">Due to browser print constraints, PDFs cannot be natively embedded for complete portfolio printing. Please, print individually and add in sequence appropriately</p>
                             <a href="${doc.fileUrl}" target="_blank" style="padding: 10px 20px; background: #d4af37; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold;">
@@ -1081,51 +1126,33 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
             `;
         }).join('');
 
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Trust Document Portfolio - ${selectedState}</title>
-                <style>
-                    body { font-family: 'Times New Roman', serif; padding: 2cm; color: #000; background: #fff; }
-                    .print-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 2rem; padding-bottom: 1rem; }
-                    .judicial-note { font-style: italic; margin-bottom: 2rem; font-size: 0.9rem; color: #333; }
-                    .toc-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; text-decoration: underline; }
-                    .print-toc-item { display: flex; justify-content: space-between; border-bottom: 1px dotted #888; padding: 0.5rem 0; }
-                    .legal-page { page-break-after: always; }
-                    .footer { margin-top: 4rem; font-size: 0.8rem; text-align: center; border-top: 1px solid #ccc; padding-top: 1rem; }
-                    @media print { .no-print { display: none; } }
-                </style>
-            </head>
-            <body>
-                <div class="no-print" style="margin-bottom: 20px;">
-                    <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">Print Now</button>
-                    <button onclick="window.close()" style="padding: 10px 20px; cursor: pointer; margin-left:10px;">Close Window</button>
-                </div>
-                <div class="legal-page">
-                    <div class="print-header">
-                        <h1>OFFICIAL TRUST DOCUMENT PORTFOLIO</h1>
-                        <p>Prepared for Judicial Recording: ${selectedState} Superior Court Systems</p>
-                    </div>
-                    <div class="judicial-note">
-                        <strong>LEGAL NOTICE:</strong> This portfolio constitutes a certified index and physical compilation of documents pertaining to the Trust. 
-                        This record is intended for physical filing and verification within the judicial recording offices of the State of ${selectedState}.
-                    </div>
-                    <div class="toc-title">TABLE OF CONTENTS</div>
-                    ${tocHtml}
-                </div>
-                ${docsHtml}
-                <div class="footer">
-                    Generated by Trust Agent Premium Portfolio System • ${new Date().toLocaleDateString()}
-                    <br/>Digital Verification ID: TA-${Math.random().toString(36).substr(2, 9).toUpperCase()}
-                </div>
-            </body>
-            </html>
+        const innerHtml = `
+            <div class="print-header" style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 2rem; padding-bottom: 1rem;">
+                <h1 style="margin:0; padding:0; font-family:'Times New Roman', serif;">OFFICIAL TRUST DOCUMENT PORTFOLIO</h1>
+                <p style="margin-top:0.5rem; font-family:'Times New Roman', serif;">Prepared for Judicial Recording: ${selectedState} Superior Court Systems</p>
+            </div>
+            <div class="judicial-note" style="font-style: italic; margin-bottom: 2rem; font-size: 0.9rem; color: #333; font-family:'Times New Roman', serif;">
+                <strong>LEGAL NOTICE:</strong> This portfolio constitutes a certified index and physical compilation of documents pertaining to the Trust. 
+                This record is intended for physical filing and verification within the judicial recording offices of the State of ${selectedState}.
+            </div>
+            <div class="toc-title" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; text-decoration: underline; font-family:'Times New Roman', serif;">TABLE OF CONTENTS</div>
+            <div style="font-family:'Times New Roman', serif;">${tocHtml}</div>
+            <div style="font-family:'Times New Roman', serif;">${docsHtml}</div>
+            <div class="footer" style="margin-top: 4rem; font-size: 0.8rem; text-align: center; border-top: 1px solid #ccc; padding-top: 1rem; font-family:'Times New Roman', serif;">
+                Generated by Trust Agent Premium Portfolio System • ${new Date().toLocaleDateString()}
+                <br/>Digital Verification ID: TA-${Math.random().toString(36).substr(2, 9).toUpperCase()}
+            </div>
         `;
 
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
-        setIsPrintModalOpen(false);
+        return (
+            <div className="print-portfolio-container" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#fff', zIndex: 9999, overflow: 'auto', padding: '2cm', color: '#000', fontFamily: "'Times New Roman', serif", lineHeight: 1.6 }}>
+                <div className="no-print" style={{ marginBottom: '20px', textAlign: 'right', display: 'flex', gap: '1rem', justifyContent: 'flex-end', position: 'sticky', top: '0', background: 'rgba(255,255,255,0.9)', padding: '1rem', borderBottom: '1px solid #ccc' }}>
+                    <button onClick={() => window.print()} style={{ padding: '10px 20px', cursor: 'pointer', background: '#d4af37', border: 'none', fontWeight: 'bold', color: '#000', borderRadius: '4px' }}>Print / Save PDF</button>
+                    <button onClick={() => setPrintData(null)} style={{ padding: '10px 20px', cursor: 'pointer', background: '#e2e8f0', border: '1px solid #cbd5e1', color: '#000', borderRadius: '4px' }}>Close Window</button>
+                </div>
+                <div dangerouslySetInnerHTML={{ __html: innerHtml }} />
+            </div>
+        );
     };
 
 
@@ -1184,7 +1211,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                                 <button onClick={handleExportBackup} className="action-btn">
                                     <Download size={14} /> Backup
                                 </button>
-                                <button onClick={() => backupInputRef.current.click()} className="action-btn">
+                                <button onClick={triggerRestore} className="action-btn">
                                     <History size={14} /> Restore
                                 </button>
                                 <button onClick={() => setIsPrintModalOpen(true)} className="action-btn">
@@ -1211,7 +1238,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                                         <button onClick={() => { handleExportBackup(); setIsDropdownOpen(false); }} className="action-btn">
                                             <Download size={14} /> Backup
                                         </button>
-                                        <button onClick={() => { backupInputRef.current.click(); setIsDropdownOpen(false); }} className="action-btn">
+                                        <button onClick={() => { triggerRestore(); setIsDropdownOpen(false); }} className="action-btn">
                                             <History size={14} /> Restore
                                         </button>
                                         <button onClick={() => { setIsPrintModalOpen(true); setIsDropdownOpen(false); }} className="action-btn">
@@ -1231,7 +1258,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                                 onChange={handleImportBackup}
                                 style={{ display: 'none' }}
                             />
-                            <button onClick={() => { setWizardDoc(null); setIsWizardOpen(true); }} className="action-btn gold">
+                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWizardDoc(null); setIsWizardOpen(true); }} className="action-btn gold">
                                 <ShieldCheck size={14} /> Create via Wizard
                             </button>
                             <button onClick={handleAdd} className="action-btn solid-gold">
@@ -1254,7 +1281,7 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                     {doc.isTemplate && (
                                         <button
-                                            onClick={() => { setWizardDoc({ ...doc, index: i }); setIsWizardOpen(true); }}
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWizardDoc({ ...doc, index: i }); setIsWizardOpen(true); }}
                                             className="icon-btn"
                                             style={{ padding: '0.4rem', color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
                                             title="Generate Document"
@@ -1426,6 +1453,8 @@ const DocumentsContent = ({ documents, onUpdateDocuments, onGenerateSuccessorKey
                 )
             }
             <CrummeyNoticeGenerator />
+            {renderPrintPortfolio()}
+            {renderDocumentViewer()}
         </div >
     );
 };
@@ -1442,7 +1471,7 @@ const FundingContent = ({ stats }) => {
                     <Wallet size={24} color="#d4af37" />
                     Funding Mastery
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
+                <div className="funding-mastery-grid">
                     <div>
                         <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
                             Your trust is efficiently funded through high-cash-value life insurance. Your current capacity for a collateralized loan is calculated at 90% of your total cash value.

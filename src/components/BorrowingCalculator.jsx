@@ -10,6 +10,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
         totalInterest: 0,
         remainingCashWork: 0
     });
+    const [showIllustration, setShowIllustration] = useState(false);
 
     useEffect(() => {
         const r = activeRate / 100 / 12;
@@ -27,139 +28,37 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
     }, [loanAmount, repaymentYears, activeRate, totalCashValue]);
 
     const handleGenerateIllustration = () => {
-        const printWindow = window.open('', '_blank');
-        const d = new Date();
+        setShowIllustration(true);
+    };
 
-        // Generate Amortization Table
+    const renderAmortizationRows = () => {
         const r = activeRate / 100 / 12;
         const n = repaymentYears * 12;
         let balance = loanAmount;
         const monthly = stats.monthlyPayment;
 
-        let tableRows = '';
+        const rows = [];
         for (let i = 1; i <= n; i++) {
             const interest = balance * r;
             const principal = monthly - interest;
             balance -= principal;
             if (balance < 0) balance = 0;
 
-            tableRows += `
-                <tr>
-                    <td>${i}</td>
-                    <td>$${monthly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td>$${principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td>$${interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td>$${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            rows.push(
+                <tr key={i}>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{i}</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>${monthly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>${principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>${interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 </tr>
-            `;
+            );
         }
-
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Formal Loan Illustration - IBC</title>
-                <style>
-                    body { font-family: 'Times New Roman', serif; padding: 2cm; color: #000; background: #fff; line-height: 1.6; }
-                    .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 2rem; padding-bottom: 1rem; }
-                    .title { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
-                    .subtitle { font-size: 1.1rem; color: #444; }
-                    .section { margin-bottom: 2rem; border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; }
-                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-                    .label { font-size: 0.9rem; font-weight: bold; color: #555; text-transform: uppercase; }
-                    .value { font-size: 1.25rem; }
-                    .highlight { font-size: 1.5rem; font-weight: bold; color: #000; }
-                    .footer { margin-top: 4rem; font-size: 0.8rem; text-align: center; border-top: 1px solid #ccc; padding-top: 1rem; color: #555; }
-                    .disclaimer { font-style: italic; font-size: 0.85rem; margin-top: 2rem; padding: 1rem; background: #f9f9f9; border-left: 4px solid #d4af37; }
-                    .amortization-table { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.85rem; page-break-inside: auto; }
-                    .amortization-table tr { page-break-inside: avoid; page-break-after: auto; }
-                    .amortization-table th, .amortization-table td { border: 1px solid #ddd; padding: 8px; text-align: right; }
-                    .amortization-table th { background-color: #f2f2f2; color: #333; text-align: center; font-weight: bold; }
-                    .amortization-table td:first-child { text-align: center; }    
-                    @media print { .no-print { display: none; } }
-                </style>
-            </head>
-            <body>
-                <div class="no-print" style="margin-bottom: 20px; text-align: right;">
-                    <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #d4af37; border: none; font-weight: bold;">Print Illustration</button>
-                    <button onclick="window.close()" style="padding: 10px 20px; cursor: pointer; margin-left:10px;">Close Window</button>
-                </div>
-                
-                <div class="header">
-                    <div class="title">FORMAL LOAN ILLUSTRATION</div>
-                    <div class="subtitle">Infinite Banking Concept (IBC) - Trust Wizard Simulation</div>
-                    <div style="margin-top: 0.5rem;">Generated on: ${d.toLocaleDateString()} at ${d.toLocaleTimeString()}</div>
-                </div>
-
-                <div class="section">
-                    <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Loan Parameters</h3>
-                    <div class="grid">
-                        <div>
-                            <div class="label">Requested Loan Amount</div>
-                            <div class="value highlight">$${loanAmount.toLocaleString()}</div>
-                        </div>
-                        <div>
-                            <div class="label">Total Available Collateral</div>
-                            <div class="value">$${totalCashValue.toLocaleString()}</div>
-                        </div>
-                        <div>
-                            <div class="label">Simulated Annual Interest Rate</div>
-                            <div class="value">${activeRate.toFixed(2)}%</div>
-                        </div>
-                        <div>
-                            <div class="label">Amortized Repayment Term</div>
-                            <div class="value">${repaymentYears} Years (${repaymentYears * 12} Months)</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Projected Repayment Schedule</h3>
-                    <div class="grid">
-                        <div>
-                            <div class="label">Estimated Monthly Payment</div>
-                            <div class="value highlight">$${stats.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                        </div>
-                        <div>
-                            <div class="label">Estimated Total Interest Cost</div>
-                            <div class="value">$${stats.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                        </div>
-                    </div>
-                    
-                    <h4 style="margin-top: 2rem; margin-bottom: 0.5rem;">Month-by-Month Amortization Schedule</h4>
-                    <table class="amortization-table">
-                        <thead>
-                            <tr>
-                                <th>Month</th>
-                                <th>Total Payment</th>
-                                <th>Principal Paid</th>
-                                <th>Interest Paid</th>
-                                <th>Remaining Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="disclaimer">
-                    <strong>LEGAL & FINANCIAL DISCLAIMER:</strong> This document is a simulation generated for administrative and educational planning purposes within the Trust Wizard System. It is NOT a binding offer of credit, nor an official illustration from your insurance carrier. The actual interest rate, dividend crediting rate, and repayment terms are subject to your specific policy provisions and carrier processing at the time the loan is formally requested.
-                </div>
-
-                <div class="footer">
-                    Prepared by Trust Wizard Premium Portfolio System
-                    <br/>Simulation ID: SIM-${Math.random().toString(36).substr(2, 9).toUpperCase()}
-                </div>
-            </body>
-            </html>
-        `;
-
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
+        return rows;
     };
 
     return (
+        <>
         <div className="glass-panel anim-fade-in" style={{ background: 'var(--calculator-bg)', border: '1px solid var(--accent-gold-glow)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: '#fff' }}>
@@ -170,7 +69,7 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div className="calculator-grid">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', color: '#fff', marginBottom: '0.5rem' }}>Loan Amount</label>
@@ -298,6 +197,83 @@ const BorrowingCalculator = ({ maxLoan, interestRate, totalCashValue }) => {
                 Generate Formal Illustration <ArrowRight size={18} />
             </button>
         </div>
+
+        {showIllustration && (
+            <div className="print-portfolio-container" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#fff', zIndex: 9999, overflow: 'auto', padding: '2cm', color: '#000', fontFamily: "'Times New Roman', serif", lineHeight: 1.6 }}>
+                <div className="no-print" style={{ marginBottom: '20px', textAlign: 'right', display: 'flex', gap: '1rem', justifyContent: 'flex-end', position: 'sticky', top: '0', background: 'rgba(255,255,255,0.9)', padding: '1rem', borderBottom: '1px solid #ccc' }}>
+                    <button onClick={() => window.print()} style={{ padding: '10px 20px', cursor: 'pointer', background: '#d4af37', border: 'none', fontWeight: 'bold', color: '#000', borderRadius: '4px' }}>Print / Save PDF</button>
+                    <button onClick={() => setShowIllustration(false)} style={{ padding: '10px 20px', cursor: 'pointer', background: '#e2e8f0', border: '1px solid #cbd5e1', color: '#000', borderRadius: '4px' }}>Close Window</button>
+                </div>
+                
+                <div style={{ textAlign: 'center', borderBottom: '2px solid #000', marginBottom: '2rem', paddingBottom: '1rem' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>FORMAL LOAN ILLUSTRATION</div>
+                    <div style={{ fontSize: '1.1rem', color: '#444' }}>Infinite Banking Concept (IBC) - Trust Wizard Simulation</div>
+                    <div style={{ marginTop: '0.5rem' }}>Generated on: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}</div>
+                </div>
+
+                <div style={{ marginBottom: '2rem', border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px' }}>
+                    <h3 style={{ marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>Loan Parameters</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Requested Loan Amount</div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#000' }}>${loanAmount.toLocaleString()}</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Total Available Collateral</div>
+                            <div style={{ fontSize: '1.25rem' }}>${totalCashValue.toLocaleString()}</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Simulated Annual Interest Rate</div>
+                            <div style={{ fontSize: '1.25rem' }}>{activeRate.toFixed(2)}%</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Amortized Repayment Term</div>
+                            <div style={{ fontSize: '1.25rem' }}>{repaymentYears} Years ({repaymentYears * 12} Months)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: '2rem', border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px' }}>
+                    <h3 style={{ marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>Projected Repayment Schedule</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Estimated Monthly Payment</div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#000' }}>${stats.monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Estimated Total Interest Cost</div>
+                            <div style={{ fontSize: '1.25rem' }}>${stats.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style={{ marginTop: '2rem', marginBottom: '0.5rem' }}>Month-by-Month Amortization Schedule</h4>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '2rem', fontSize: '0.85rem' }}>
+                        <thead>
+                            <tr>
+                                <th style={{ border: '1px solid #ddd', padding: '8px', background: '#f2f2f2', color: '#333', textAlign: 'center', fontWeight: 'bold' }}>Month</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px', background: '#f2f2f2', color: '#333', textAlign: 'center', fontWeight: 'bold' }}>Total Payment</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px', background: '#f2f2f2', color: '#333', textAlign: 'center', fontWeight: 'bold' }}>Principal Paid</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px', background: '#f2f2f2', color: '#333', textAlign: 'center', fontWeight: 'bold' }}>Interest Paid</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px', background: '#f2f2f2', color: '#333', textAlign: 'center', fontWeight: 'bold' }}>Remaining Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {renderAmortizationRows()}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style={{ fontStyle: 'italic', fontSize: '0.85rem', marginTop: '2rem', padding: '1rem', background: '#f9f9f9', borderLeft: '4px solid #d4af37' }}>
+                    <strong>LEGAL & FINANCIAL DISCLAIMER:</strong> This document is a simulation generated for administrative and educational planning purposes within the Trust Wizard System. It is NOT a binding offer of credit, nor an official illustration from your insurance carrier. The actual interest rate, dividend crediting rate, and repayment terms are subject to your specific policy provisions and carrier processing at the time the loan is formally requested.
+                </div>
+
+                <div style={{ marginTop: '4rem', fontSize: '0.8rem', textAlign: 'center', borderTop: '1px solid #ccc', paddingTop: '1rem', color: '#555' }}>
+                    Prepared by Trust Wizard Premium Portfolio System<br/>
+                    Simulation ID: SIM-{Math.random().toString(36).substr(2, 9).toUpperCase()}
+                </div>
+            </div>
+        )}
+        </>
     );
 };
 

@@ -8,75 +8,16 @@ const CrummeyNoticeGenerator = () => {
         giftAmount: '18000',
         giftDate: new Date().toISOString().split('T')[0]
     });
+    const [showNotice, setShowNotice] = useState(false);
 
     const handleGenerate = () => {
-        const printWindow = window.open('', '_blank');
-        const currentDate = new Date().toLocaleDateString();
-
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Crummey Right of Withdrawal Notice</title>
-                <style>
-                    body { font-family: 'Times New Roman', serif; padding: 2cm; color: #000; line-height: 1.6; }
-                    .header { text-align: center; margin-bottom: 2rem; }
-                    .title { font-size: 1.5rem; font-weight: bold; text-decoration: underline; margin-bottom: 2rem; }
-                    .content { margin-bottom: 2rem; text-align: justify; }
-                    .signature-block { margin-top: 4rem; display: flex; justify-content: space-between; }
-                    .sig-line { border-top: 1px solid #000; width: 300px; padding-top: 0.5rem; }
-                    @media print { .no-print { display: none; } }
-                </style>
-            </head>
-            <body>
-                <div class="no-print" style="margin-bottom: 20px; text-align: right;">
-                    <button onclick="window.print()" style="padding: 10px 20px; background: #d4af37; border: none; font-weight: bold; cursor: pointer;">Print Notice</button>
-                    <button onclick="window.close()" style="padding: 10px 20px; margin-left:10px; cursor: pointer;">Close</button>
-                </div>
-                
-                <div class="header">
-                    <h2>NOTICE OF RIGHT OF WITHDRAWAL</h2>
-                    <p>Relating to <strong>${formData.trustName}</strong></p>
-                </div>
-                
-                <div class="content">
-                    <p><strong>Date:</strong> ${currentDate}</p>
-                    <p><strong>To:</strong> ${formData.beneficiaryName}</p>
-                    <br/>
-                    <p>Dear ${formData.beneficiaryName},</p>
-                    <p>This letter is to inform you that on <strong>${new Date(formData.giftDate).toLocaleDateString()}</strong>, a contribution in the amount of <strong>$${Number(formData.giftAmount).toLocaleString()}</strong> was made to the <strong>${formData.trustName}</strong> (the "Trust").</p>
-                    <p>Under the terms of the Trust instrument, you are hereby granted an absolute, unqualified right to withdraw your pro-rata share of this contribution. This right of withdrawal must be exercised within thirty (30) days from the receipt of this notice.</p>
-                    <p>If you fail to exercise this right of withdrawal within the specified time period, your right to withdraw this specific contribution will lapse, and the funds will remain in the Trust to be administered and distributed in accordance with the terms of the Trust agreement.</p>
-                    <p>To exercise your right of withdrawal, please submit a written request to the Trustee before the expiration of the thirty-day period.</p>
-                </div>
-                
-                <div class="signature-block">
-                    <div>
-                        <div class="sig-line">Trustee Signature</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 6rem;">
-                    <h3 style="text-decoration: underline; margin-bottom: 3rem;">ACKNOWLEDGMENT OF RECEIPT</h3>
-                    <p>I, <strong>${formData.beneficiaryName}</strong>, acknowledge receipt of this Notice of Right of Withdrawal and understand my rights as described herein.</p>
-                    <div class="signature-block">
-                        <div>
-                            <div class="sig-line">Beneficiary Signature</div>
-                        </div>
-                        <div>
-                            <div class="sig-line">Date</div>
-                        </div>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `;
-
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
+        setShowNotice(true);
     };
 
+    const currentDate = new Date().toLocaleDateString();
+
     return (
+        <>
         <div className="glass-panel" style={{ marginTop: '2rem', border: '1px solid rgba(212, 175, 55, 0.4)' }}>
             <h3 className="card-title">
                 <FileText size={20} color="#d4af37" />
@@ -148,6 +89,51 @@ const CrummeyNoticeGenerator = () => {
                 Generate Official Notice
             </button>
         </div>
+
+        {showNotice && (
+            <div className="print-portfolio-container" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#fff', zIndex: 9999, overflow: 'auto', padding: '2cm', color: '#000', fontFamily: "'Times New Roman', serif", lineHeight: 1.6 }}>
+                <div className="no-print" style={{ marginBottom: '20px', textAlign: 'right', display: 'flex', gap: '1rem', justifyContent: 'flex-end', position: 'sticky', top: '0', background: 'rgba(255,255,255,0.9)', padding: '1rem', borderBottom: '1px solid #ccc' }}>
+                    <button onClick={() => window.print()} style={{ padding: '10px 20px', background: '#d4af37', border: 'none', fontWeight: 'bold', cursor: 'pointer', borderRadius: '4px', color: '#000' }}>Print Notice</button>
+                    <button onClick={() => setShowNotice(false)} style={{ padding: '10px 20px', cursor: 'pointer', background: '#e2e8f0', border: '1px solid #cbd5e1', borderRadius: '4px', color: '#000' }}>Close</button>
+                </div>
+                
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', textDecoration: 'underline', marginBottom: '0.5rem' }}>NOTICE OF RIGHT OF WITHDRAWAL</h2>
+                    <p style={{ margin: 0 }}>Relating to <strong>{formData.trustName}</strong></p>
+                </div>
+                
+                <div style={{ marginBottom: '2rem', textAlign: 'justify' }}>
+                    <p><strong>Date:</strong> {currentDate}</p>
+                    <p><strong>To:</strong> {formData.beneficiaryName}</p>
+                    <br/>
+                    <p>Dear {formData.beneficiaryName},</p>
+                    <p>This letter is to inform you that on <strong>{new Date(formData.giftDate).toLocaleDateString()}</strong>, a contribution in the amount of <strong>${Number(formData.giftAmount).toLocaleString()}</strong> was made to the <strong>{formData.trustName}</strong> (the "Trust").</p>
+                    <p>Under the terms of the Trust instrument, you are hereby granted an absolute, unqualified right to withdraw your pro-rata share of this contribution. This right of withdrawal must be exercised within thirty (30) days from the receipt of this notice.</p>
+                    <p>If you fail to exercise this right of withdrawal within the specified time period, your right to withdraw this specific contribution will lapse, and the funds will remain in the Trust to be administered and distributed in accordance with the terms of the Trust agreement.</p>
+                    <p>To exercise your right of withdrawal, please submit a written request to the Trustee before the expiration of the thirty-day period.</p>
+                </div>
+                
+                <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'space-between' }}>
+                    <div>
+                        <div style={{ borderTop: '1px solid #000', width: '300px', paddingTop: '0.5rem', marginTop: '2rem' }}>Trustee Signature</div>
+                    </div>
+                </div>
+
+                <div style={{ marginTop: '6rem' }}>
+                    <h3 style={{ textDecoration: 'underline', marginBottom: '3rem' }}>ACKNOWLEDGMENT OF RECEIPT</h3>
+                    <p>I, <strong>{formData.beneficiaryName}</strong>, acknowledge receipt of this Notice of Right of Withdrawal and understand my rights as described herein.</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4rem' }}>
+                        <div>
+                            <div style={{ borderTop: '1px solid #000', width: '300px', paddingTop: '0.5rem' }}>Beneficiary Signature</div>
+                        </div>
+                        <div>
+                            <div style={{ borderTop: '1px solid #000', width: '200px', paddingTop: '0.5rem' }}>Date</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+        </>
     );
 };
 

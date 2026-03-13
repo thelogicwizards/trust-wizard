@@ -273,16 +273,40 @@ const DocumentWizard = ({ isOpen, onClose, onSave, initialDoc }) => {
     const [scannedFile, setScannedFile] = useState(null);
     const fileInputRef = useRef(null);
 
+    const [showPrintOverlay, setShowPrintOverlay] = useState(false);
+
     if (!isOpen) return null;
 
     const handleNext = () => setStep(step + 1);
     const handleBack = () => setStep(step > 1 ? step - 1 : 1);
 
     const handlePrintTemplate = () => {
-        const printWindow = window.open('', '_blank');
-        const printContent = activeTemplate.generateHTML(formData);
-        printWindow.document.write(printContent);
-        printWindow.document.close();
+        setShowPrintOverlay(true);
+    };
+
+    const renderPrintOverlay = () => {
+        if (!showPrintOverlay) return null;
+        
+        let rawHtml = activeTemplate.generateHTML(formData);
+        
+        rawHtml = rawHtml.replace(/<script>window\.onload = function\(\) \{ window\.print\(\); \}<\/script>/g, '');
+        rawHtml = rawHtml.replace(/<!DOCTYPE html>/gi, '');
+        rawHtml = rawHtml.replace(/<html>/gi, '');
+        rawHtml = rawHtml.replace(/<\/html>/gi, '');
+        rawHtml = rawHtml.replace(/<body>/gi, '');
+        rawHtml = rawHtml.replace(/<\/body>/gi, '');
+        rawHtml = rawHtml.replace(/<head>/gi, '');
+        rawHtml = rawHtml.replace(/<\/head>/gi, '');
+        
+        return (
+            <div className="print-portfolio-container" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#fff', zIndex: 99999, overflow: 'auto', color: '#000' }}>
+                <div className="no-print" style={{ position: 'sticky', top: 0, background: 'rgba(255,255,255,0.9)', padding: '1rem', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'flex-end', gap: '1rem', zIndex: 100000 }}>
+                    <button onClick={() => window.print()} style={{ padding: '10px 20px', background: '#d4af37', border: 'none', fontWeight: 'bold', color: '#000', borderRadius: '4px', cursor: 'pointer' }}>Print Document</button>
+                    <button onClick={() => setShowPrintOverlay(false)} style={{ padding: '10px 20px', background: '#e2e8f0', border: '1px solid #cbd5e1', color: '#000', borderRadius: '4px', cursor: 'pointer' }}>Close Window</button>
+                </div>
+                <div dangerouslySetInnerHTML={{ __html: rawHtml }} />
+            </div>
+        );
     };
 
     const handleFileCapture = (e) => {
@@ -465,6 +489,7 @@ const DocumentWizard = ({ isOpen, onClose, onSave, initialDoc }) => {
                     </div>
                 )}
             </div>
+            {renderPrintOverlay()}
         </div>
     );
 };

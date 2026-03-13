@@ -1,7 +1,8 @@
-feat: implement light/dark mode theme toggle and refined styling
+feat: implement Cross-Platform Tauri v2 Multi-Builds
 
-- Added a functional light/dark mode toggle button to the app footer
-- Created light mode CSS variables for a premium, readable light theme
-- Updated main components (App, BorrowingCalculator, ComplianceTracker) to dynamically respond to light/dark themes
-- Handled hardcoded color edge cases to ensure optimal visibility in both modes
-- Preserved the existing dark mode aesthetic and established a new, highly visible light mode variant
+- Initialized Tauri 2.0 configuration for macOS desktop, iOS, and Android
+- Added CSS safe-area-insets and viewport-fit rules to prevent UI from overlapping mobile notches
+- Replaced blocked `window.open()` popups with React modal overlays to restore Document Printing and PDF Viewing capability on Apple WebKit browsers
+- Integrated Tauri `@tauri-apps/plugin-fs` and `@tauri-apps/plugin-dialog` to replace standard PWA generic file streaming with native OS "Save-As" file system pickers for macOS and mobile platforms
+- Resolved Android WebView ghost-click unmounting bugs on the Document Wizard
+- Resolved CSS iOS fixed positioning stacking context inheritance issues

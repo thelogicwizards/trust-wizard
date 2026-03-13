@@ -48,12 +48,35 @@ export const exportVaultToZip = async () => {
             }
         });
 
-        // Generate the zip and trigger download
-        const blob = await zip.generateAsync({ type: "blob" });
+        // Generate the zip and trigger download Based on environment
         const dateStr = new Date().toISOString().split('T')[0];
-        saveAs(blob, `Trust_Agent_Backup_${dateStr}.zip`);
+        const filename = `Trust_Agent_Backup_${dateStr}.zip`;
 
-        return true;
+        if (window.__TAURI_INTERNALS__) {
+            const { save } = await import('@tauri-apps/plugin-dialog');
+            const { writeFile } = await import('@tauri-apps/plugin-fs');
+            
+            const filePath = await save({
+                defaultPath: filename,
+                filters: [{
+                    name: 'ZIP files',
+                    extensions: ['zip']
+                }]
+            });
+            
+            if (filePath) {
+                const u8 = await zip.generateAsync({ type: "uint8array" });
+                await writeFile(filePath, u8);
+                return true;
+            } else {
+                return false; // User cancelled the save dialog
+            }
+        } else {
+            const blob = await zip.generateAsync({ type: "blob" });
+            saveAs(blob, filename);
+            return true;
+        }
+
     } catch (error) {
         console.error("Backup Export Failed: ", error);
         alert("An error occurred while creating the backup.");
@@ -61,10 +84,10 @@ export const exportVaultToZip = async () => {
     }
 };
 
-export const importVaultFromZip = async (file) => {
+const processZipData = async (fileData) => {
     try {
         const zip = new JSZip();
-        const loadedZip = await zip.loadAsync(file);
+        const loadedZip = await zip.loadAsync(fileData);
 
         // 1. Read the config file
         const configFile = loadedZip.file("trust_vault_config.json");
@@ -94,8 +117,37 @@ export const importVaultFromZip = async (file) => {
         await saveTrustData(trustData);
         return trustData;
     } catch (error) {
-        console.error("Backup Import Failed: ", error);
+        console.error("Zip Processing Failed: ", error);
         alert("An error occurred while restoring the backup. Please ensure it is a valid Trust Agent ZIP file.");
         return null;
     }
+};
+
+export const importVaultFromNative = async () => {
+    try {
+        if (!window.__TAURI_INTERNALS__) return false;
+        
+        const { open } = await import('@tauri-apps/plugin-dialog');
+        const { readFile } = await import('@tauri-apps/plugin-fs');
+
+        const filePath = await open({
+            multiple: false,
+            filters: [{
+                name: 'ZIP files',
+                extensions: ['zip']
+            }]
+        });
+
+        if (!filePath) return false;
+
+        const fileData = await readFile(filePath); 
+        return await processZipData(fileData);
+    } catch (e) {
+        console.error("Native Import Failed: ", e);
+        return false;
+    }
+};
+
+export const importVaultFromZip = async (file) => {
+    return await processZipData(file);
 };
