@@ -51,6 +51,7 @@ import { loadTrustData, saveTrustData } from './utils/storage';
 import { exportVaultToZip, importVaultFromZip, importVaultFromNative } from './utils/backup';
 import { generateHashKey } from './utils/hashKey';
 import { SuccessorInput, SuccessorDashboard } from './components/SuccessorView';
+import TrustLogo from './components/TrustLogo';
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -1784,9 +1785,9 @@ function App() {
     return (
         <div className="app-container">
             <nav className="navbar anim-fade-in" style={{ position: 'relative' }}>
-                <div className="logo" onClick={() => setActiveTab('overview')} style={{ cursor: 'pointer' }}>
-                    <Landmark size={28} />
-                    <span className="premium-text">TRUST WIZARD</span>
+                <div className="logo" onClick={() => setActiveTab('overview')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <TrustLogo size={36} color="#d4af37" />
+                    <span className="premium-text" style={{ fontSize: '1.2rem', marginTop: '2px' }}>TRUST WIZARD</span>
                 </div>
                 <div className="mobile-only">
                     <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="action-btn" style={{ padding: '0.4rem' }}>
@@ -1895,8 +1896,8 @@ function App() {
 
             <footer className="app-footer anim-fade-in" style={{ animationDelay: '0.8s' }}>
                 <div className="footer-content">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-gold)' }}>
-                        <Landmark size={18} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--accent-gold)' }}>
+                        <TrustLogo size={28} color="var(--accent-gold)" />
                         <span style={{ fontWeight: 600, letterSpacing: '1px' }}>TRUST WIZARD</span>
                     </div>
                     <div className="footer-links">
