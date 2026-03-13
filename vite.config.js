@@ -19,9 +19,9 @@ export default defineConfig({
                 display: 'standalone',
                 icons: [
                     {
-                        src: 'trust-icon.svg',
+                        src: 'trust-icon.png',
                         sizes: 'any',
-                        type: 'image/svg+xml'
+                        type: 'image/png'
                     }
                 ]
             }

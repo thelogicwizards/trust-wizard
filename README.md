@@ -1,7 +1,7 @@
 # Trust Wizard
 
 <div align="center">
-  <img src="public/trust-icon.svg" alt="Trust Wizard Logo" width="120">
+  <img src="public/trust-icon.png" alt="Trust Wizard Logo" width="120">
 </div>
 
 ## Overview
