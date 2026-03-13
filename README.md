@@ -42,8 +42,8 @@ Instantly generate a standalone HTML package bundling all portfolio metrics, pol
 ### 8. Annual Compliance Tracker
 Track and manually configure required annual Trust upkeep tasks—such as Crummey notices, entity fees, and trustee meetings—using a persistent dashboard widget.
 
-### 9. Progressive Web App (PWA) Mobile Ready
-Trust Wizard is built from the ground up to be installed natively and features a responsive, mobile-first UI with a clean hamburger navigation. Host the static files on any free cloud edge network (e.g., Vercel, GitHub Pages), and "Install" the application directly to your macOS, iOS, Windows, or Android device for a standalone, full-screen experience that works completely offline.
+### 9. Multi-Platform Native App & PWA
+Trust Wizard is built from the ground up using **Tauri v2** to be published as a native application on **macOS**, **iOS**, and **Android** leveraging lightweight, deeply integrated native WebViews. Additionally, the core Vite single-page application remains a Progressive Web App (PWA), meaning it can be hosted on any free cloud edge network (e.g., Vercel, GitHub Pages) and installed directly via web browsers on any unsupported device for a completely offline experience.
 
 ## 🚀 Quick Start (Local Development)
 
@@ -64,11 +64,28 @@ Trust Wizard is built from the ground up to be installed natively and features a
    npm install
    ```
 
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-   *Navigate to `http://localhost:5173` in your browser. Any data you enter will persist locally on your machine.*
+### Running the App
+
+**For Web/PWA Development:**
+```bash
+npm run dev
+```
+*Navigate to `http://localhost:5173`. Any data you enter will persist locally on your machine.*
+
+**For macOS Native Desktop:**
+```bash
+npm run tauri dev
+```
+
+**For iOS (requires Xcode):**
+```bash
+npm run tauri ios dev
+```
+
+**For Android (requires Android Studio):**
+```bash
+npm run tauri android dev
+```
 
 ## 🌩️ Deployment (Free Cloud Hosting)
 
@@ -80,9 +97,10 @@ Trust Wizard is built from the ground up to be installed natively and features a
 *Once deployed or visited at the URL above on any device, select "Add to Home Screen" to install it as a native standalone app.*
 
 ## Tech Stack
+- **Native Wrapper:** Tauri v2 (Rust)
 - **Framework:** React + Vite
 - **Styling:** Vanilla CSS (Glassmorphism & CSS-Grid)
-- **State/Storage:** React Hooks + IndexedDB (`localforage` + `jszip`)
+- **State/Storage:** React Hooks + IndexedDB (`localforage` + `jszip` + `@tauri-apps/plugin-fs`)
 - **Data Visualization:** Recharts
 - **Icons:** Lucide React
 
