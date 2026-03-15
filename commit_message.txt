@@ -1,12 +1,2 @@
-UI: implement Cross-Platform Tauri v2 Multi-Builds & Rebranding
-
-Features & Fixes:
-- Initialized Tauri 2.0 configuration for macOS desktop, iOS, and Android
-- Added CSS safe-area-insets and viewport-fit rules to prevent UI from overlapping mobile notches
-- Replaced blocked `window.open()` popups with React modal overlays for Document Printing capability on Apple WebKit browsers
-- Integrated Tauri `@tauri-apps/plugin-fs` and `@tauri-apps/plugin-dialog` to replace standard PWA generic file streaming with native OS "Save-As" file system pickers for macOS and mobile platforms
-- Resolved Android WebView ghost-click unmounting bugs on the Document Wizard
-- Resolved CSS iOS fixed positioning stacking context inheritance issues
-- Generated and integrated new custom "Shield/Infinity" composite SVG branding across the entire app
-- Added `launch_plan.md` strategy for Native App deployments
-- Fully verified PWA, macOS, Android, and iOS workflows remain cleanly synced
+Launch: 
+- Configured App Store submission preparations for macOS Sandboxing, iOS Usage Descriptions, Android File Scopes
